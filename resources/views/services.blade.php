@@ -117,38 +117,62 @@
             0% { opacity: 0; transform: scale(0.9) translateY(20px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
+
+        
     </style>
 </head>
 
 <body class="bg-[#efefef] font-sans antialiased">
 
-    <header class="services-header text-white">
-        <nav class="max-w-7xl mx-auto w-full px-6 py-5 flex justify-between items-center relative z-30">
-            <div class="flex items-center gap-3">
-                <img src="{{ asset('images/woman-with-long-hair.png') }}" alt="Logo" class="w-8 h-8 object-contain white-icon">
-                <span class="font-black text-xl tracking-tighter uppercase italic leading-none">TONET SALON</span>
-            </div>
-            
-            <div class="hidden md:flex items-center space-x-8 text-[11px] font-black uppercase tracking-widest text-gray-300">
-                <a href="/" class="hover:text-white transition">Home</a>
-                <a href="/services" class="text-white nav-active">Services</a>
-                <a href="#" class="hover:text-red-600 transition">Team</a>
-                <a href="#" class="hover:text-red-600 transition">About</a>
-                <a href="/register" class="bg-red-600 text-white px-5 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
-            </div>
-        </nav>
-
-        <div class="text-center mt-16">
-            <h1 class="hero-title uppercase italic">
-                OUR PREMIUM<br>
-                <span class="text-red-600 not-italic">SERVICES</span>
-            </h1>
-            <p class="uppercase tracking-[0.3em] text-[10px] text-gray-400 font-bold mt-10">
-                Experience the magic of transformation
-            </p>
+  <header class="services-header text-white">
+    <nav class="max-w-7xl mx-auto w-full px-6 py-5 flex justify-between items-center relative z-30">
+        <div class="flex items-center gap-3">
+            <img src="{{ asset('images/woman-with-long-hair.png') }}" alt="Logo" class="w-8 h-8 object-contain white-icon">
+            <span class="font-black text-xl tracking-tighter uppercase italic leading-none">TONET SALON</span>
         </div>
-    </header>
+        
+        <div class="hidden md:flex items-center space-x-8 text-[11px] font-black uppercase tracking-widest text-gray-300">
+            <a href="{{ route('home') }}" 
+               class="{{ Request::is('/') ? 'text-white nav-active' : 'hover:text-white transition' }}">
+               Home
+            </a>
 
+            <a href="{{ route('services') }}" 
+               class="{{ Request::is('services') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
+               Services
+            </a>
+
+            <a href="{{ route('team') }}" 
+               class="{{ Request::is('team') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
+               Team
+            </a>
+
+            <a href="{{ route('about') }}" 
+               class="{{ Request::is('about') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
+               About
+            </a>
+
+            <a href="{{ route('gallery') }}" 
+               class="{{ Request::is('gallery') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
+               Gallery
+            </a>
+
+            <a href="{{ route('register') }}" class="bg-red-600 text-white px-5 py-2 hover:bg-white hover:text-black transition">
+                Sign Up
+            </a>
+        </div>
+    </nav>
+
+    <div class="text-center mt-16">
+        <h1 class="hero-title uppercase italic">
+            OUR PREMIUM<br>
+            <span class="text-red-600 not-italic">SERVICES</span>
+        </h1>
+        <p class="uppercase tracking-[0.3em] text-[10px] text-gray-400 font-bold mt-10">
+            Experience the magic of transformation
+        </p>
+    </div>
+</header>
     <main class="max-w-7xl mx-auto px-6 py-20">
         <h2 class="text-center text-red-600 font-black uppercase text-4xl mb-16 italic tracking-tighter" id="hair-section-title">
             Hair Color & Rebond
@@ -653,29 +677,43 @@
     </div>
 </main>
 
-    <footer>
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-16">
-                <h2 class="footer-heading italic">Ready for seeing<br><span>A new look?</span></h2>
-                <div class="flex space-x-6 mt-8 md:mt-0">
-                    <a href="#" class="text-xl hover:text-red-600 transition"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" class="text-xl hover:text-red-600 transition"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="text-xl hover:text-red-600 transition"><i class="fab fa-tiktok"></i></a>
-                </div>
-            </div>
-            <hr class="border-gray-800 mb-8">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-                <div class="flex items-center gap-3">
-                    <div class="bg-white p-1 rounded-sm"><i class="fas fa-phone text-red-600 text-xs"></i></div>
-                    <a href="tel:09289362396" class="text-[11px] font-bold text-gray-400 hover:text-white transition">09289362396</a>
-                </div>
-                <div class="flex space-x-8">
-                    <a href="#" class="footer-link text-gray-400">Privacy Policy</a>
-                    <a href="#" class="footer-link text-gray-400">Terms & Conditions</a>
-                </div>
+   <footer class="bg-black text-white py-16">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-black italic uppercase leading-none tracking-tighter">
+                READY FOR SEEING<br>
+                <span class="text-red-600">A NEW LOOK?</span>
+            </h2>
+            <div class="flex gap-6 mt-8 md:mt-0 text-xl">
+                <a href="#" class="hover:text-red-600 transition"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="hover:text-red-600 transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-red-600 transition"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
-    </footer>
+
+        <hr class="border-gray-800 mb-8">
+
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-3">
+                <div class="bg-white p-1 rounded-sm flex items-center justify-center w-6 h-6">
+                    <i class="fas fa-phone text-red-600 text-xs"></i>
+                </div>
+                <a href="tel:09289362396" class="text-[11px] font-extrabold text-gray-400 hover:text-white transition tracking-widest">
+                    09289362396
+                </a>
+            </div>
+            
+            <div class="flex gap-8">
+                <a href="#" class="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 hover:text-white transition">
+                    Privacy Policy
+                </a>
+                <a href="#" class="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 hover:text-white transition">
+                    Terms & Conditions
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
 
 </body>
 </html>

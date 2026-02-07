@@ -124,32 +124,55 @@
 </head>
 <body class="antialiased bg-[#f3f4f6] font-sans">
 
-    <header class="hero-section slant-bottom text-white">
-        <nav class="max-w-7xl mx-auto w-full px-6 py-5 flex justify-between items-center relative z-30">
-            <div class="flex items-center gap-3">
-                <img src="{{ asset('images/woman-with-long-hair.png') }}" alt="Logo" class="w-8 h-8 object-contain white-icon">
-                <span class="font-black text-xl tracking-tighter uppercase italic leading-none">TONET SALON</span>
-            </div>
-            <div class="hidden md:flex items-center space-x-6 text-[10px] font-bold uppercase tracking-widest text-gray-300">
-                <a href="/" class="text-white nav-active">Home</a>
-                <a href="/services" class="hover:text-red-600 transition">Services</a>
-                <a href="#" class="hover:text-red-600 transition">Team</a>
-                <a href="#" class="hover:text-red-600 transition">About</a>
-                <a href="/register" class="bg-red-600 text-white px-4 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
-            </div>
-        </nav>
+  <header class="hero-section slant-bottom text-white">
+    <nav class="max-w-7xl mx-auto w-full px-6 py-5 flex justify-between items-center relative z-30">
+        <div class="flex items-center gap-3">
+            <img src="{{ asset('images/woman-with-long-hair.png') }}" alt="Logo" class="w-8 h-8 object-contain white-icon">
+            <span class="font-black text-xl tracking-tighter uppercase italic leading-none">TONET SALON</span>
+        </div>
+        
+        <div class="hidden md:flex items-center space-x-8 text-[10px] font-bold uppercase tracking-widest text-gray-300">
+            <a href="{{ route('home') }}" 
+               class="{{ Request::is('/') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
+               Home
+            </a>
 
-        <div class="content-container max-w-7xl mx-auto w-full px-6 pb-12">
-            <div class="max-w-xl">
-                <h1 class="hero-title uppercase italic">UNVIEL YOUR<br><span class="shine-text not-italic">SHINE</span></h1>
-                <p class="hero-subtitle">Experience the magic of transformation</p>
-                <div class="mt-8">
-                    <a href="/login" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">Book Appointment</a>
-                </div>
+            <a href="{{ route('services') }}" 
+               class="{{ Request::is('services') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
+               Services
+            </a>
+
+            <a href="{{ route('team') }}" 
+               class="{{ Request::is('team') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
+               Team
+            </a>
+
+            <a href="{{ route('about') }}" 
+               class="{{ Request::is('about') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
+               About
+            </a>
+
+            <a href="{{ route('gallery') }}" 
+               class="{{ Request::is('gallery') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
+               Gallery
+            </a>
+
+            <a href="{{ route('register') }}" class="bg-red-600 text-white px-4 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
+        </div>
+    </nav>
+
+    <div class="content-container max-w-7xl mx-auto w-full px-6 pb-12">
+        <div class="max-w-xl">
+            <h1 class="hero-title uppercase italic">UNVEIL YOUR<br><span class="shine-text not-italic">SHINE</span></h1>
+            <p class="hero-subtitle">Experience the magic of transformation</p>
+            <div class="mt-8">
+                <a href="{{ route('login') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">
+                    Book Appointment
+                </a>
             </div>
         </div>
-    </header>
-
+    </div>
+</header>
     <section class="max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-10 gap-12 items-center text-black">
         <div class="md:col-span-4 flex justify-center">
             <div class="w-full shadow-2xl">
@@ -198,4 +221,4 @@
         </div>
     </footer>
 </body>
-</html>
+</html> 

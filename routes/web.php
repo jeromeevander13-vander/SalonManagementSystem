@@ -2,70 +2,45 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes (No login required)
-|--------------------------------------------------------------------------
-*/
+// --- Public Routes ---
+Route::get('/', function () { return view('welcome'); })->name('home');
+Route::view('/services', 'services')->name('services');
+Route::view('/team', 'team')->name('team');
+Route::view('/about', 'about')->name('about');
+Route::view('/gallery', 'gallery')->name('gallery');
 
-// Home Page
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
-
-// Services Page
-Route::get('/services', function () {
-    return view('services');
-})->name('services');
-
-// Team Page
-Route::get('/team', function () { 
-    return view('team'); 
-})->name('team');
-
-// About Page (MOVED HERE)
-Route::get('/about', function () {
-    return view('about');
-})->name('about');
-
-// Add this to your public routes section
-Route::get('/gallery', function () {
-    return view('gallery');
-})->name('gallery');
-
-
-/*
-|--------------------------------------------------------------------------
-| Authenticated & Dashboard Routes (Login required)
-|--------------------------------------------------------------------------
-*/
-
+// --- Authenticated Routes ---
 Route::middleware(['auth', 'verified'])->group(function() {
     
-    // Admin Dashboard
-    Route::get('/dashboard', function() {
-        return view('dashboard');
-    })->name('dashboard')->middleware('can:acces-admin');
+    // SMART REDIRECT
+    Route::get('/redirect', function() {
+        if (Auth::user()->can('acces-admin')) {
+            return redirect()->route('admin_main');
+        }
+        return redirect()->route('client_main');
+    })->name('user.redirect');
 
-    // Client Dashboard
-    Route::get('/client/dashboard', function() {
-        return view('welcome');
-    })->name('client')->middleware('can:acces-client');
+    // Admin Dashboard (resources/views/admin/dashboard.blade.php)
+    Route::get('/admin', function() {
+        return view('admin.dashboard'); 
+    })->name('admin_main')->middleware('can:acces-admin');
 
-    // Other Authenticated Pages
-    Route::get('/main', function () {
-        return view('main');
-    })->name('main');
+    // Client Dashboard (resources/views/client/dashboard.blade.php)
+    Route::get('/client', function() {
+        return view('client.dashboard'); 
+    })->name('client_main')->middleware('can:acces-client');
 
-    Route::get('/new', function () {
-        return view('new');
-    })->name('new');
+    Route::view('/main', 'main')->name('main');
+    Route::view('/new', 'new')->name('new');
 
     // Profile Management
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::controller(ProfileController::class)->group(function () {
+        Route::get('/profile', 'edit')->name('profile.edit');
+        Route::patch('/profile', 'update')->name('profile.update');
+        Route::delete('/profile', 'destroy')->name('profile.destroy');
+    });
 });
 
 require __DIR__.'/auth.php';

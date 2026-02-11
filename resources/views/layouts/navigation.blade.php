@@ -12,15 +12,10 @@
                 </div>
 
                 <div class="hidden sm:flex sm:ms-10 space-x-6">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-gray-300 hover:text-indigo-400 transition">
+                    <x-nav-link :href="route('admin_main')" :active="request()->routeIs('admin_main')" class="text-gray-300 hover:text-indigo-400 transition">
                         Dashboard
                     </x-nav-link>
-                    <x-nav-link :href="route('main')" :active="request()->routeIs('main')" class="text-gray-300 hover:text-indigo-400 transition">
-                        Rooms
-                    </x-nav-link>
-                    <x-nav-link :href="route('new')" :active="request()->routeIs('new')" class="text-gray-300 hover:text-indigo-400 transition">
-                        New
-                    </x-nav-link>
+                    
                 </div>
             </div>
 

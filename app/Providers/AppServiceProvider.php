@@ -21,15 +21,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-
-     Gate::define('acces-admin',function(User $user){
-               return $user->role === 'admin';
+        /**
+         * Gate for Admin access
+         * This matches middleware('can:acces-admin') in your routes.
+         */
+        Gate::define('acces-admin', function (User $user) {
+            return $user->role === 'admin';
         });
-        
-        Gate::define('acces-client',function(User $user){
-               return in_array($user->role, ['client']);
-        });
 
+        /**
+         * Gate for Client access
+         * This matches middleware('can:acces-client') in your routes.
+         */
+        Gate::define('acces-client', function (User $user) {
+            return $user->role === 'client';
+        });
     }
-
 }

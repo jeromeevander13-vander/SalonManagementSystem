@@ -137,8 +137,8 @@
 
     <div class="text-center mt-12 mb-10">
         <h1 class="text-6xl md:text-7xl font-black uppercase italic leading-[0.8] tracking-tighter">
-            OUR PREMIUM<br>
-            <span class="text-red-600 not-italic">SERVICES</span>
+             THIS OUR<br>
+            <span class="text-red-600 not-italic">TEAM</span>
         </h1>
         <p class="uppercase text-[9px] tracking-[0.4em] text-gray-400 font-bold mt-6">
             Experience the magic of transformation

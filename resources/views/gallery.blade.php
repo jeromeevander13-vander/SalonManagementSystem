@@ -86,7 +86,7 @@
                     <img src="{{ asset('images/F2.jpg') }}" alt="After">
                 </div>
                 <div class="flex gap-1 img-card">
-                    <img src="{{ asset('imagesG.jpg') }}" alt="Before">
+                    <img src="{{ asset('images/G.jpg') }}" alt="Before">
                     <img src="{{ asset('images/G2.jpg') }}" alt="After">
                 </div>
 

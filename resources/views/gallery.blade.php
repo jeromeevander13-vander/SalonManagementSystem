@@ -66,28 +66,28 @@
                     <img src="{{ asset('images/a1.jpg') }}" alt="After">
                 </div>
                 <div class="flex gap-1 img-card">
-                    <img src="{{ asset('images/b.jpg') }}" alt="Before">
-                    <img src="{{ asset('images/b2.jpg') }}" alt="After">
+                    <img src="{{ asset('images/B.jpg') }}" alt="Before">
+                    <img src="{{ asset('images/B2.jpg') }}" alt="After">
                 </div>
                 <div class="flex gap-1 img-card">
-                    <img src="{{ asset('images/c.jpg') }}" alt="Before">
-                    <img src="{{ asset('images/c2.jpg') }}" alt="After">
+                    <img src="{{ asset('images/C.jpg') }}" alt="Before">
+                    <img src="{{ asset('images/C2.jpg') }}" alt="After">
                 </div>
                 <div class="flex gap-1 img-card">
-                    <img src="{{ asset('images/d.jpg') }}" alt="Before">
-                    <img src="{{ asset('images/d1.jpg') }}" alt="After">
+                    <img src="{{ asset('images/D.jpg') }}" alt="Before">
+                    <img src="{{ asset('images/D1.jpg') }}" alt="After">
                 </div>
                 <div class="flex gap-1 img-card">
-                    <img src="{{ asset('images/e.jpg') }}" alt="Before">
-                    <img src="{{ asset('images/e1.jpg') }}" alt="After">
+                    <img src="{{ asset('images/E.jpg') }}" alt="Before">
+                    <img src="{{ asset('images/E1.jpg') }}" alt="After">
                 </div>
                 <div class="flex gap-1 img-card">
-                    <img src="{{ asset('images/f.jpg') }}" alt="Before">
-                    <img src="{{ asset('images/f2.jpg') }}" alt="After">
+                    <img src="{{ asset('images/F.jpg') }}" alt="Before">
+                    <img src="{{ asset('images/F2.jpg') }}" alt="After">
                 </div>
                 <div class="flex gap-1 img-card">
-                    <img src="{{ asset('images/g.jpg') }}" alt="Before">
-                    <img src="{{ asset('images/g2.jpg') }}" alt="After">
+                    <img src="{{ asset('imagesG.jpg') }}" alt="Before">
+                    <img src="{{ asset('images/G2.jpg') }}" alt="After">
                 </div>
 
             </div>

@@ -532,7 +532,7 @@
             <img src="{{ asset('images/eyebrows3.png') }}" class="service-image" alt="Combo Brow">
             <div class="service-details">
                 <div>
-                    <h4 class="font-black uppercase text-sm leading-tight">COMBO BROW:</h4>
+                    <h4 class="font-black uppercase text-sm leading-tight">COMBROW:</h4>
                     <p class="text-black font-black text-sm mt-1">
                         1 SESSION: ₱2,099.00<br>
                         2 SESSION: ₱3,999.00

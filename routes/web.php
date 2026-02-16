@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AppointmentController; // Moved to the very top!
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+// --- Public Routes ---
+// ... keep the rest of your code exactly as it is ...
 // --- Public Routes ---
 Route::get('/', function () { return view('welcome'); })->name('home');
 Route::view('/services', 'services')->name('services');
@@ -22,18 +25,15 @@ Route::middleware(['auth', 'verified'])->group(function() {
         return redirect()->route('client_main');
     })->name('user.redirect');
 
-    // Admin Dashboard (resources/views/admin/dashboard.blade.php)
-    Route::get('/admin', function() {
-        return view('admin.dashboard'); 
-    })->name('admin_main')->middleware('can:acces-admin');
-
-    // Client Dashboard (resources/views/client/dashboard.blade.php)
-    Route::get('/client', function() {
-        return view('client.dashboard'); 
-    })->name('client_main')->middleware('can:acces-client');
+    // Admin/Client Dashboards
+    Route::get('/admin', function() { return view('admin.dashboard'); })->name('admin_main')->middleware('can:acces-admin');
+    Route::get('/client', function() { return view('client.dashboard'); })->name('client_main')->middleware('can:acces-client');
 
     Route::view('/main', 'main')->name('main');
     Route::view('/new', 'new')->name('new');
+
+    // BOOKING ROUTE
+    Route::post('/book-appointment', [AppointmentController::class, 'store'])->name('appointment.store');
 
     // Profile Management
     Route::controller(ProfileController::class)->group(function () {

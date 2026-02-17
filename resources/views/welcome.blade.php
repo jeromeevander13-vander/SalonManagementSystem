@@ -1,3 +1,9 @@
+@php
+    // This forces the browser to check the server instead of using a cached version
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -78,7 +84,6 @@
             padding-bottom: 2px;
         }
 
-        /* FOOTER SPECIFIC STYLES */
         footer {
             background-color: #000;
             color: #fff;
@@ -124,55 +129,66 @@
 </head>
 <body class="antialiased bg-[#f3f4f6] font-sans">
 
-  <header class="hero-section slant-bottom text-white">
-    <nav class="max-w-7xl mx-auto w-full px-6 py-5 flex justify-between items-center relative z-30">
-        <div class="flex items-center gap-3">
-            <img src="{{ asset('images/woman-with-long-hair.png') }}" alt="Logo" class="w-8 h-8 object-contain white-icon">
-            <span class="font-black text-xl tracking-tighter uppercase italic leading-none">TONET SALON</span>
-        </div>
-        
-        <div class="hidden md:flex items-center space-x-8 text-[10px] font-bold uppercase tracking-widest text-gray-300">
-            <a href="{{ route('home') }}" 
-               class="{{ Request::is('/') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
-               Home
-            </a>
+    <header class="hero-section slant-bottom text-white">
+        <nav class="max-w-7xl mx-auto w-full px-6 py-5 flex justify-between items-center relative z-30">
+            <div class="flex items-center gap-3">
+                <img src="{{ asset('images/woman-with-long-hair.png') }}" alt="Logo" class="w-8 h-8 object-contain white-icon">
+                <span class="font-black text-xl tracking-tighter uppercase italic leading-none">TONET SALON</span>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-8 text-[10px] font-bold uppercase tracking-widest text-gray-300">
+                <a href="{{ route('home') }}" class="{{ Request::is('/') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Home</a>
+                <a href="{{ route('services') }}" class="{{ Request::is('services') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Services</a>
+                <a href="{{ route('team') }}" class="{{ Request::is('team') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Team</a>
+                <a href="{{ route('about') }}" class="{{ Request::is('about') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">About</a>
+                <a href="{{ route('gallery') }}" class="{{ Request::is('gallery') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Gallery</a>
 
-            <a href="{{ route('services') }}" 
-               class="{{ Request::is('services') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
-               Services
-            </a>
+                {{-- CORRECTED AUTH LOGIC --}}
+                @auth
+                    @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin_main') }}" class="hover:text-red-600 transition">Dashboard</a>
+                    @else
+                        <a href="{{ route('client_main') }}" class="hover:text-red-600 transition">Dashboard</a>
+                    @endif
 
-            <a href="{{ route('team') }}" 
-               class="{{ Request::is('team') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
-               Team
-            </a>
+                    <form method="POST" action="{{ route('logout') }}" class="inline m-0">
+                        @csrf
+                        <button type="submit" class="bg-gray-800 text-white px-4 py-2 hover:bg-red-600 transition uppercase font-bold text-[10px]">
+                            Logout
+                        </button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="hover:text-red-600 transition">Login</a>
+                    <a href="{{ route('register') }}" class="bg-red-600 text-white px-4 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
+                @endauth
+            </div>
+        </nav>
 
-            <a href="{{ route('about') }}" 
-               class="{{ Request::is('about') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
-               About
-            </a>
-
-            <a href="{{ route('gallery') }}" 
-               class="{{ Request::is('gallery') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
-               Gallery
-            </a>
-
-            <a href="{{ route('register') }}" class="bg-red-600 text-white px-4 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
-        </div>
-    </nav>
-
-    <div class="content-container max-w-7xl mx-auto w-full px-6 pb-12">
-        <div class="max-w-xl">
-            <h1 class="hero-title uppercase italic">UNVEIL YOUR<br><span class="shine-text not-italic">SHINE</span></h1>
-            <p class="hero-subtitle">Experience the magic of transformation</p>
-            <div class="mt-8">
-                <a href="{{ route('login') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">
-                    Book Appointment
-                </a>
+        <div class="content-container max-w-7xl mx-auto w-full px-6 pb-12">
+            <div class="max-w-xl">
+                <h1 class="hero-title uppercase italic">UNVEIL YOUR<br><span class="shine-text not-italic">SHINE</span></h1>
+                <p class="hero-subtitle">Experience the magic of transformation</p>
+                <div class="mt-8">
+                    @auth
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin_main') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">
+                                Admin Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('client_main') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">
+                                Book Appointment
+                            </a>
+                        @endif
+                    @else
+                        <a href="{{ route('login') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">
+                            Book Appointment
+                        </a>
+                    @endauth
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
+
     <section class="max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-10 gap-12 items-center text-black">
         <div class="md:col-span-4 flex justify-center">
             <div class="w-full shadow-2xl">
@@ -190,10 +206,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-16">
                 <div>
-                    <h2 class="footer-heading italic">
-                        Ready for seeing<br>
-                        <span>A new look?</span>
-                    </h2>
+                    <h2 class="footer-heading italic">Ready for seeing<br><span>A new look?</span></h2>
                 </div>
                 <div class="flex space-x-6 mt-8 md:mt-0">
                     <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
@@ -201,17 +214,11 @@
                     <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
-
             <hr class="border-gray-800 mb-8">
-
             <div class="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="flex items-center gap-3">
-                    <div class="bg-white p-1 rounded-sm">
-                        <i class="fas fa-phone text-red-600 text-xs"></i>
-                    </div>
-                    <a href="tel:09289362396" class="text-[11px] font-bold text-gray-400 hover:text-white transition">
-                        09289362396
-                    </a>
+                    <div class="bg-white p-1 rounded-sm"><i class="fas fa-phone text-red-600 text-xs"></i></div>
+                    <a href="tel:09289362396" class="text-[11px] font-bold text-gray-400 hover:text-white transition">09289362396</a>
                 </div>
                 <div class="flex space-x-8">
                     <a href="#" class="footer-link text-gray-400">Privacy Policy</a>
@@ -220,5 +227,18 @@
             </div>
         </div>
     </footer>
+
+    {{-- SCRIPT TO FIX THE BACK BUTTON ISSUE --}}
+    <script>
+        window.addEventListener( "pageshow", function ( event ) {
+            var historyTraversal = event.persisted || 
+                                   ( typeof window.performance != "undefined" && 
+                                     window.performance.navigation.type === 2 );
+            if ( historyTraversal ) {
+                // Force a reload so the session is re-checked
+                window.location.reload();
+            }
+        });
+    </script>
 </body>
-</html> 
+</html>

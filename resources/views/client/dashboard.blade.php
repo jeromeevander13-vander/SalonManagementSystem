@@ -61,7 +61,7 @@
         { category: 'HAIR COLOR & REBOND', name: 'BRAZILLIAN BOTOX TREATMENT', price: '₱800.00', duration: '1.5 hrs', img: '{{ asset('images/rebond13.png') }}', desc: 'ELIMINATES FRIZZ AND REPAIRS HAIR FIBERS.', sessions: null },
 
         // RF SLIMMING & CONTOUR (WITH SESSIONS)
-        { category: 'RF SLIMMING & CONTOUR', name: 'RF FACE', price: '₱229.00', duration: '30 mins', img: '{{ asset('images/rf1.png') }}', desc: 'NON-INVASIVE SKIN TIGHTENING AND FACIAL CONTOURING.', sessions: null },
+        { category: 'RF SLIMMING & CONTOUR', name: 'RF FACE', price: '₱229.00', duration: '30 mins', img: '{{ asset('images/rf1.png') }}', desc: 'NON-INVASIVE SKIN TIGHTENING AND FACIAL CONTOURING.', sessions: ['5 SESSIONS: ₱1,030.00', '12 SESSIONS: ₱2,418.00'] },
         { category: 'RF SLIMMING & CONTOUR', name: 'RF ARMS W/ CAVITATION', price: '₱429.00', duration: '45 mins', img: '{{ asset('images/rf2.png') }}', desc: 'FIRM LOOSE SKIN AND SCULPT UPPER ARMS.', sessions: ['5 SESSIONS: ₱1,930.00', '12 SESSIONS: ₱4,350.00'] },
         { category: 'RF SLIMMING & CONTOUR', name: 'RF TUMMY W/ CAVITATION', price: '₱519.00', duration: '45 mins', img: '{{ asset('images/rf3.png') }}', desc: 'FIRMS ABDOMINAL AREA FOR A TIGHTER WAISTLINE.', sessions: ['5 SESSIONS: ₱2,335.00', '12 SESSIONS: ₱5,480.00'] },
         { category: 'RF SLIMMING & CONTOUR', name: 'RF LEGS W/ CAVITATION', price: '₱519.00', duration: '45 mins', img: '{{ asset('images/rf4.png') }}', desc: 'REDUCE CELLULITE AND CONTOUR THE LEGS.', sessions: ['5 SESSIONS: ₱2,335.00', '12 SESSIONS: ₱5,480.00'] },
@@ -269,38 +269,49 @@
                                 <p class="text-gray-400 font-bold text-xs uppercase tracking-widest" x-text="'Duration: ' + selectedDuration"></p>
                             </div>
                         </div>
+<form class="space-y-5" method="POST" action="{{ route('appointment.store') }}">
+    @csrf
+    
+    <input type="hidden" name="service_type" x-model="bookingData.service_type">
 
-                        <form class="space-y-5">
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Select Date</label>
-                                <input type="date" class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Select Time</label>
-                                <select class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
-                                    <option class="bg-card-dark">09:00 AM</option>
-                                    <option class="bg-card-dark">10:30 AM</option>
-                                    <option class="bg-card-dark">01:00 PM</option>
-                                    <option class="bg-card-dark">03:30 PM</option>
-                                    <option class="bg-card-dark">05:00 PM</option>
-                                </select>
-                            </div>
-
-                            <button type="button" @click="alert('Booking Request Sent for ' + selectedService + '!'); showModal = false; step = 1" 
-                                    class="w-full bg-red-600 text-white py-4 rounded font-black uppercase tracking-widest shadow-lg hover:bg-white hover:text-black transition-all transform hover:scale-[1.02]">
-                                Confirm Appointment
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="p-4 bg-black border-t border-red-900 flex justify-end">
-                <button @click="showModal = false; step = 1" class="text-[10px] font-black uppercase text-gray-500 hover:text-red-600 transition tracking-widest">
-                    Exit Booking
-                </button>
-            </div>
-        </div>
+    <div>
+        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Select Date</label>
+        <input type="date" name="appointment_date" x-model="bookingData.date" required
+            class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
     </div>
+
+    <div>
+        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Select Time</label>
+        <select name="appointment_time" x-model="bookingData.time" required
+            class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
+            <option value="09:00:00">09:00 AM</option>
+            <option value="10:30:00">10:30 AM</option>
+            <option value="13:00:00">01:00 PM</option>
+            <option value="15:30:00">03:30 PM</option>
+            <option value="17:00:00">05:00 PM</option>
+        </select>
+    </div>
+
+    <div>
+        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Phone Number</label>
+        <input type="text" name="phone" x-model="bookingData.phone" placeholder="0912 345 6789" required
+            class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
+    </div>
+
+    <div>
+        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Special Requests</label>
+        <textarea name="message" x-model="bookingData.message" rows="2" 
+            class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none"
+            placeholder="Any specific requests?"></textarea>
+    </div>
+
+    <button type="submit" 
+        class="w-full bg-red-600 text-white py-4 rounded font-black uppercase tracking-widest shadow-lg hover:bg-white hover:text-black transition-all transform hover:scale-[1.02]">
+        Confirm Appointment
+    </button>
+</form>
+
+        </div>
+            </div>
 </body>
 </html>

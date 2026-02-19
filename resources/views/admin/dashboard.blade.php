@@ -38,22 +38,26 @@
                             <span class="text-red-600 text-2xl font-bold italic">✂</span>
                             <span class="text-lg font-black tracking-tighter uppercase italic">Tonet Salon Management System</span>
                         </div>
-                        
-                        <div class="hidden md:flex space-x-1 ml-10 text-[10px] font-bold uppercase tracking-widest">
-                            <button @click="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">Dashboard</button>
-                            <button @click="currentTab = 'appointments'" :class="currentTab === 'appointments' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">Appointments</button>
-                            <a href="#" class="hover:text-red-500 px-3 py-2 transition">Services</a>
-                            <a href="#" class="hover:text-red-500 px-3 py-2 transition">Customers</a>
-                            <a href="#" class="hover:text-red-500 px-3 py-2 transition">Invoices</a>
-                            <a href="#" class="hover:text-red-500 px-3 py-2 transition">Inquiries</a>
-                        </div>
+<div class="hidden md:flex space-x-1 ml-10 text-[10px] font-bold uppercase tracking-widest">
+                            <button @click="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">DASHBOARD</button>
+                            <button @click="currentTab = 'appointments'" :class="currentTab === 'appointments' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">APPOINTMENTS</button>
+                            <button @click="currentTab = 'services'" :class="currentTab === 'services' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">SERVICES</button>
+    
+    <button @click="currentTab = 'clients'" :class="currentTab === 'clients' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">CLIENTS</button>
+    
+    <button @click="currentTab = 'reports'" :class="currentTab === 'reports' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">REPORTS</button>
+    
+    <button @click="currentTab = 'inquiries'" :class="currentTab === 'inquiries' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">INQUIRIES</button>
+</div>
+                           
                     </div>
 
+                        
                     <div class="flex items-center">
                         <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
                             <button @click="dropdownOpen = !dropdownOpen" class="flex items-center focus:outline-none group">
                                 <span class="text-xs font-bold uppercase mr-2 text-gray-400 italic group-hover:text-red-500 transition">Admin</span>
-                                <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-105">A</div>
+                               <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-105">A</div>
                             </button>
                             <div x-show="dropdownOpen" x-transition class="absolute right-0 z-50 mt-2 w-48 rounded bg-card-dark border border-red-900 py-1" style="display: none;">
                                 <form method="POST" action="{{ route('logout') }}">
@@ -67,6 +71,7 @@
             </div>
         </nav>
 
+        
         <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             
             <div x-show="currentTab === 'dashboard'">
@@ -144,7 +149,21 @@
                     </div>
                 </div>
             </div>
+                <div x-show="currentTab === 'services'" x-cloak>
+    @include('admin.services')
+</div>
 
+<div x-show="currentTab === 'clients'" x-cloak>
+    @include('admin.clients')
+</div>
+
+<div x-show="currentTab === 'reports'" x-cloak>
+    @include('admin.reports')
+</div>
+
+<div x-show="currentTab === 'inquiries'" x-cloak>
+    @include('admin.inquiries')
+</div>
             <div x-show="currentTab === 'appointments'" x-cloak>
                 <div class="mb-8">
                     <h1 class="text-3xl font-black text-white uppercase italic">Manage Appointments</h1>
@@ -173,6 +192,8 @@
                     </div>
                 </div>
 
+     
+
                 <div class="bg-card-dark border border-red-900 rounded shadow-2xl overflow-hidden">
                     <div class="bg-red-900 bg-opacity-40 border-b border-red-900 px-6 py-3">
                         <h3 class="font-black text-white uppercase italic text-[10px] tracking-[0.2em]">All Appointments</h3>
@@ -182,24 +203,43 @@
                             <thead>
                                 <tr class="border-b border-red-900 text-[10px] font-black uppercase tracking-widest text-red-500 italic">
                                     <th class="px-6 py-4">Customer</th>
-                                    <th class="px-6 py-4">Service</th>
+                                    <th class="px-6 py-4">phone</th>
                                     <th class="px-6 py-4">Date & Time</th>
                                     <th class="px-6 py-4">Status</th>
                                     <th class="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                 @foreach ($data as $datas)
                                 <tr>
-                                    <td colspan="5" class="p-20 text-center text-gray-700 font-bold uppercase text-[10px] tracking-[0.4em] italic">
-                                        No records found in system
-                                    </td>
+                                       
+                                             <td  class=" text-center text-white font-bold uppercase text-[10px] tracking-[0.4em] italic">
+                                                {{$datas->customer_name}}
+                                            </td>
+                                            <td  class=" text-center text-white font-bold uppercase text-[10px] tracking-[0.4em] italic">
+                                                {{$datas->phone}}
+                                            </td>
+                                            <td  class=" text-center text-white font-bold uppercase text-[10px] tracking-[0.4em] italic">
+                                                {{$datas->appointment_time}}
+                                            </td>
+                                            <td  class=" text-center text-white font-bold uppercase text-[10px] tracking-[0.4em] italic">
+                                                {{$datas->status}}
+                                            </td>
+                                            <td  class=" text-center text-white font-bold uppercase text-[10px] tracking-[0.4em] italic">
+                                                <a href="{{ route('admin.edit', $datas->id) }}" class="text-red-500 hover:text-red-400">Update</a> 
+                                                
+                                            </td>
+                                        
+                                   
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </main>
+
     </div>
 </body>
 </html>

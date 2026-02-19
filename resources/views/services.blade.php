@@ -32,6 +32,25 @@
             filter: brightness(0) invert(1);
         }
         
+        /* MOBILE MENU STYLING */
+        #mobile-menu {
+            display: none;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.95);
+            position: absolute;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 20px;
+            border-bottom: 2px solid #ff0000;
+        }
+
+        #mobile-menu.active {
+            display: flex;
+        }
+
+        /* Original Animations */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -52,6 +71,22 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             border: 1px solid transparent;
+        }
+
+        /* Mobile adjustment for cards */
+        @media (max-width: 640px) {
+            .service-card-container {
+                flex-direction: column;
+                height: auto;
+            }
+            .service-image, .service-details {
+                width: 100%;
+            }
+            .service-image {
+                height: 200px;
+                border-right: none;
+                border-bottom: 1px solid #bbb;
+            }
         }
 
         .service-card-container:hover {
@@ -81,10 +116,7 @@
             justify-content: space-between;
         }
 
-        /* TOGGLE LOGIC CSS */
-        .hidden-item {
-            display: none !important;
-        }
+        .hidden-item { display: none !important; }
 
         .see-more-wrapper {
             display: flex;
@@ -105,26 +137,18 @@
             transition: 0.3s;
         }
 
-        .btn-see-more:hover {
-            background-color: #000;
-        }
-
-        .pop-up-animation {
-            animation: cardAppear 0.6s cubic-bezier(0.2, 1, 0.3, 1) forwards;
-        }
+        .btn-see-more:hover { background-color: #000; }
 
         @keyframes cardAppear {
             0% { opacity: 0; transform: scale(0.9) translateY(20px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-
-        
     </style>
 </head>
 
 <body class="bg-[#efefef] font-sans antialiased">
 
-  <header class="services-header text-white">
+<header class="services-header text-white">
     <nav class="max-w-7xl mx-auto w-full px-6 py-5 flex justify-between items-center relative z-30">
         <div class="flex items-center gap-3">
             <img src="{{ asset('images/woman-with-long-hair.png') }}" alt="Logo" class="w-8 h-8 object-contain white-icon">
@@ -132,34 +156,25 @@
         </div>
         
         <div class="hidden md:flex items-center space-x-8 text-[11px] font-black uppercase tracking-widest text-gray-300">
-            <a href="{{ route('home') }}" 
-               class="{{ Request::is('/') ? 'text-white nav-active' : 'hover:text-white transition' }}">
-               Home
-            </a>
+            <a href="{{ route('home') }}" class="{{ Request::is('/') ? 'text-white nav-active' : 'hover:text-white transition' }}">Home</a>
+            <a href="{{ route('services') }}" class="{{ Request::is('services') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Services</a>
+            <a href="{{ route('team') }}" class="{{ Request::is('team') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Team</a>
+            <a href="{{ route('about') }}" class="{{ Request::is('about') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">About</a>
+            <a href="{{ route('gallery') }}" class="{{ Request::is('gallery') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Gallery</a>
+            <a href="{{ route('register') }}" class="bg-red-600 text-white px-5 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
+        </div>
 
-            <a href="{{ route('services') }}" 
-               class="{{ Request::is('services') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
-               Services
-            </a>
+        <button id="menu-toggle" class="md:hidden text-white focus:outline-none text-2xl">
+            <i class="fas fa-bars"></i>
+        </button>
 
-            <a href="{{ route('team') }}" 
-               class="{{ Request::is('team') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
-               Team
-            </a>
-
-            <a href="{{ route('about') }}" 
-               class="{{ Request::is('about') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
-               About
-            </a>
-
-            <a href="{{ route('gallery') }}" 
-               class="{{ Request::is('gallery') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">
-               Gallery
-            </a>
-
-            <a href="{{ route('register') }}" class="bg-red-600 text-white px-5 py-2 hover:bg-white hover:text-black transition">
-                Sign Up
-            </a>
+        <div id="mobile-menu" class="md:hidden">
+            <a href="{{ route('home') }}" class="py-3 border-b border-gray-800 text-[10px] uppercase font-bold tracking-widest">Home</a>
+            <a href="{{ route('services') }}" class="py-3 border-b border-gray-800 text-[10px] uppercase font-bold tracking-widest text-red-600">Services</a>
+            <a href="{{ route('team') }}" class="py-3 border-b border-gray-800 text-[10px] uppercase font-bold tracking-widest">Team</a>
+            <a href="{{ route('about') }}" class="py-3 border-b border-gray-800 text-[10px] uppercase font-bold tracking-widest">About</a>
+            <a href="{{ route('gallery') }}" class="py-3 border-b border-gray-800 text-[10px] uppercase font-bold tracking-widest">Gallery</a>
+            <a href="{{ route('register') }}" class="mt-4 text-center bg-red-600 py-2 text-[10px] uppercase font-bold">Sign Up</a>
         </div>
     </nav>
 
@@ -173,6 +188,19 @@
         </p>
     </div>
 </header>
+
+<script>
+    // Toggle script for mobile menu
+    document.getElementById('menu-toggle').addEventListener('click', function() {
+        const menu = document.getElementById('mobile-menu');
+        menu.classList.toggle('active');
+        
+        // Toggle between bars and X icon
+        const icon = this.querySelector('i');
+        icon.classList.toggle('fa-bars');
+        icon.classList.toggle('fa-times');
+    });
+</script>
     <main class="max-w-7xl mx-auto px-6 py-20">
         <h2 class="text-center text-red-600 font-black uppercase text-4xl mb-16 italic tracking-tighter" id="hair-section-title">
             Hair Color & Rebond

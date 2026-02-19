@@ -39,6 +39,19 @@
             z-index: 1;
         }
 
+        /* MOBILE FIX FOR HERO IMAGE */
+        @media (max-width: 768px) {
+            .hero-section::after {
+                width: 100%;
+                opacity: 0.5; /* Keeps text readable on mobile */
+                mask-image: linear-gradient(to top, transparent 0%, black 40%);
+                -webkit-mask-image: linear-gradient(to top, transparent 0%, black 40%);
+            }
+            .hero-title {
+                transform: scaleY(1.2) !important; /* Slightly less vertical stretch for mobile screens */
+            }
+        }
+
         .slant-bottom {
             clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
         }
@@ -82,6 +95,24 @@
         .nav-active {
             border-bottom: 2px solid #ff0000;
             padding-bottom: 2px;
+        }
+
+        /* MOBILE MENU STYLING */
+        #mobile-menu {
+            display: none;
+            flex-direction: column;
+            background: black;
+            position: absolute;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 20px;
+            border-bottom: 2px solid #ff0000;
+        }
+
+        #mobile-menu.active {
+            display: flex;
         }
 
         footer {
@@ -143,23 +174,32 @@
                 <a href="{{ route('about') }}" class="{{ Request::is('about') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">About</a>
                 <a href="{{ route('gallery') }}" class="{{ Request::is('gallery') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Gallery</a>
 
-                {{-- CORRECTED AUTH LOGIC --}}
                 @auth
-                    @if(Auth::user()->role === 'admin')
-                        <a href="{{ route('admin_main') }}" class="hover:text-red-600 transition">Dashboard</a>
-                    @else
-                        <a href="{{ route('client_main') }}" class="hover:text-red-600 transition">Dashboard</a>
-                    @endif
-
                     <form method="POST" action="{{ route('logout') }}" class="inline m-0">
                         @csrf
-                        <button type="submit" class="bg-gray-800 text-white px-4 py-2 hover:bg-red-600 transition uppercase font-bold text-[10px]">
-                            Logout
-                        </button>
+                        <button type="submit" class="bg-gray-800 text-white px-4 py-2 hover:bg-red-600 transition uppercase font-bold text-[10px]">Logout</button>
                     </form>
                 @else
                     <a href="{{ route('login') }}" class="hover:text-red-600 transition">Login</a>
                     <a href="{{ route('register') }}" class="bg-red-600 text-white px-4 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
+                @endauth
+            </div>
+
+            <button id="menu-toggle" class="md:hidden text-white focus:outline-none text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div id="mobile-menu" class="md:hidden">
+                <a href="{{ route('home') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Home</a>
+                <a href="{{ route('services') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Services</a>
+                <a href="{{ route('about') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">About</a>
+                @auth
+                     <form method="POST" action="{{ route('logout') }}" class="mt-4">
+                        @csrf
+                        <button type="submit" class="text-red-600 text-[10px] uppercase font-bold">Logout</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="py-2 text-[10px] uppercase tracking-widest">Login</a>
                 @endauth
             </div>
         </nav>
@@ -171,18 +211,12 @@
                 <div class="mt-8">
                     @auth
                         @if(Auth::user()->role === 'admin')
-                            <a href="{{ route('admin_main') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">
-                                Admin Dashboard
-                            </a>
+                            <a href="{{ route('admin_main') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">Admin Dashboard</a>
                         @else
-                            <a href="{{ route('client_main') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">
-                                Book Appointment
-                            </a>
+                            <a href="{{ route('client_main') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">Book Appointment</a>
                         @endif
                     @else
-                        <a href="{{ route('login') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">
-                            Book Appointment
-                        </a>
+                        <a href="{{ route('login') }}" class="bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-white hover:text-black transition">Book Appointment</a>
                     @endauth
                 </div>
             </div>
@@ -196,7 +230,7 @@
             </div>
         </div>
         <div class="md:col-span-6 border-l-4 border-red-600 pl-10">
-            <h2 class="text-6xl font-black uppercase tracking-tighter leading-[0.9]">YOUR JOURNEY<br>TO BEAUTY</h2>
+            <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9]">YOUR JOURNEY<br>TO BEAUTY</h2>
             <p class="mt-8 text-gray-600 text-lg italic leading-relaxed">Step into Tonet Salon, where our stylists and premium teams transform your look into something that brings beauty to life.</p>
             <a href="/services" class="mt-10 inline-block bg-red-600 text-white px-8 py-3 font-bold uppercase tracking-widest text-[11px] hover:bg-black transition">VIEW SERVICES</a>
         </div>
@@ -228,14 +262,17 @@
         </div>
     </footer>
 
-    {{-- SCRIPT TO FIX THE BACK BUTTON ISSUE --}}
     <script>
+        // Hamburger Toggle Script
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+        });
+
         window.addEventListener( "pageshow", function ( event ) {
             var historyTraversal = event.persisted || 
                                    ( typeof window.performance != "undefined" && 
                                      window.performance.navigation.type === 2 );
             if ( historyTraversal ) {
-                // Force a reload so the session is re-checked
                 window.location.reload();
             }
         });

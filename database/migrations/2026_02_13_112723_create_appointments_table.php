@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('phone');
 
             // Information about the salon visit
-            $table->string('service_type'); // e.g., Haircut, Coloring, Styling
+            $table->string('service_type')->nullable(); // e.g., Haircut, Coloring, Styling
             $table->dateTime('appointment_time');
             
             // Status for your Dashboard counters (0 Pending, etc.)

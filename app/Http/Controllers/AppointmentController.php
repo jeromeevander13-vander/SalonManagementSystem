@@ -15,7 +15,7 @@ public function store(Request $request)
         'customer_name'    => auth()->user()->name,
         'email'            => auth()->user()->email,
         'phone'            => $request->phone,
-        'service_type'     => $request->service_type,
+        
         'appointment_time' => $request->appointment_date . ' ' . $request->appointment_time,
         'status'           => 'pending',
         'message'          => $request->message,

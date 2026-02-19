@@ -130,7 +130,18 @@
             <a href="{{ route('team') }}" class="{{ Request::is('team') ? 'text-white' : 'hover:text-red-600 transition' }}">Team</a>
             <a href="{{ route('about') }}" class="{{ Request::is('about') ? 'text-white' : 'hover:text-red-600 transition' }}">About</a>
             <a href="{{ route('gallery') }}" class="{{ Request::is('gallery') ? 'text-white' : 'hover:text-red-600 transition' }}">Gallery</a>
-            <a href="{{ route('register') }}" class="bg-red-600 text-white px-4 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
+           
+              @auth
+                    <a href="{{ Auth::user()->role === 'admin' ? route('admin_main') : route('client_main') }}" class="hover:text-red-600 transition">Dashboard</a>
+                    
+                    <form method="POST" action="{{ route('logout') }}" class="inline m-0">
+                        @csrf
+                        <button type="submit" class="bg-gray-800 text-white px-4 py-2 hover:bg-red-600 transition uppercase font-bold text-[10px]">Logout</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="hover:text-red-600 transition">Login</a>
+                    <a href="{{ route('register') }}" class="bg-red-600 text-white px-4 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
+                @endauth
         </div>
 
         <button id="menu-btn" class="md:hidden text-white text-2xl focus:outline-none">
@@ -144,7 +155,16 @@
         <a href="{{ route('team') }}" class="block text-white">Team</a>
         <a href="{{ route('about') }}" class="block text-gray-300">About</a>
         <a href="{{ route('gallery') }}" class="block text-gray-300">Gallery</a>
-        <a href="{{ route('register') }}" class="block text-red-600">Sign Up</a>
+         @auth
+                    <a href="{{ Auth::user()->role === 'admin' ? route('admin_main') : route('client_main') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Dashboard</a>
+                    <form method="POST" action="{{ route('logout') }}" class="mt-4">
+                        @csrf
+                        <button type="submit" class="text-red-600 text-[10px] uppercase font-bold">Logout</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Login</a>
+                    <a href="{{ route('register') }}" class="py-2 text-[10px] uppercase tracking-widest">Sign Up</a>
+                @endauth
     </div>
 
     <div class="text-center mt-12 mb-10 px-4">

@@ -39,16 +39,15 @@
             z-index: 1;
         }
 
-        /* MOBILE FIX FOR HERO IMAGE */
         @media (max-width: 768px) {
             .hero-section::after {
                 width: 100%;
-                opacity: 0.5; /* Keeps text readable on mobile */
+                opacity: 0.5;
                 mask-image: linear-gradient(to top, transparent 0%, black 40%);
                 -webkit-mask-image: linear-gradient(to top, transparent 0%, black 40%);
             }
             .hero-title {
-                transform: scaleY(1.2) !important; /* Slightly less vertical stretch for mobile screens */
+                transform: scaleY(1.2) !important;
             }
         }
 
@@ -97,7 +96,6 @@
             padding-bottom: 2px;
         }
 
-        /* MOBILE MENU STYLING */
         #mobile-menu {
             display: none;
             flex-direction: column;
@@ -175,6 +173,8 @@
                 <a href="{{ route('gallery') }}" class="{{ Request::is('gallery') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Gallery</a>
 
                 @auth
+                    <a href="{{ Auth::user()->role === 'admin' ? route('admin_main') : route('client_main') }}" class="hover:text-red-600 transition">Dashboard</a>
+                    
                     <form method="POST" action="{{ route('logout') }}" class="inline m-0">
                         @csrf
                         <button type="submit" class="bg-gray-800 text-white px-4 py-2 hover:bg-red-600 transition uppercase font-bold text-[10px]">Logout</button>
@@ -192,14 +192,18 @@
             <div id="mobile-menu" class="md:hidden">
                 <a href="{{ route('home') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Home</a>
                 <a href="{{ route('services') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Services</a>
+                <a href="{{ route('team') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Team</a>
                 <a href="{{ route('about') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">About</a>
+                <a href="{{ route('gallery') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Gallery</a>
                 @auth
-                     <form method="POST" action="{{ route('logout') }}" class="mt-4">
+                    <a href="{{ Auth::user()->role === 'admin' ? route('admin_main') : route('client_main') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Dashboard</a>
+                    <form method="POST" action="{{ route('logout') }}" class="mt-4">
                         @csrf
                         <button type="submit" class="text-red-600 text-[10px] uppercase font-bold">Logout</button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="py-2 text-[10px] uppercase tracking-widest">Login</a>
+                    <a href="{{ route('login') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Login</a>
+                    <a href="{{ route('register') }}" class="py-2 text-[10px] uppercase tracking-widest">Sign Up</a>
                 @endauth
             </div>
         </nav>
@@ -263,7 +267,6 @@
     </footer>
 
     <script>
-        // Hamburger Toggle Script
         document.getElementById('menu-toggle').addEventListener('click', function() {
             document.getElementById('mobile-menu').classList.toggle('active');
         });

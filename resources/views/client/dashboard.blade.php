@@ -37,10 +37,16 @@
             opacity: 1;
             margin-top: 0.5rem;
         }
+
+        /* MOBILE FIX FOR SQUEEZED TEXT */
+        @media (max-width: 640px) {
+            .mobile-title { font-size: 0.75rem !important; line-height: 1.2; }
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-dark-home text-gray-200" x-data="{ 
     currentTab: 'dashboard',
+    mobileMenuOpen: false,
     appointments: [],
     showModal: false,
     step: 1,
@@ -103,9 +109,16 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-14">
                     <div class="flex items-center space-x-4">
+                        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-gray-400 hover:text-red-500 focus:outline-none">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
                         <div class="flex items-center space-x-2">
                             <span class="text-red-600 text-2xl font-bold">✂</span>
-                            <span class="text-lg font-bold tracking-tight uppercase">Tonet Salon Management System</span>
+                            <span class="text-lg font-bold tracking-tight uppercase mobile-title">Tonet Salon Management System</span>
                         </div>
                         <div class="hidden md:flex space-x-2 ml-10 text-xs font-bold uppercase tracking-widest">
                             <a href="#" @click.prevent="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded flex items-center transition">Dashboard</a>
@@ -115,17 +128,16 @@
                             <a href="#" @click.prevent="currentTab = 'myappointments'" :class="currentTab === 'myappointments' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded transition flex items-center">My Appointments</a>
                             
                             <a href="#" @click.prevent="currentTab = 'invoices'" :class="currentTab === 'invoices' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded transition flex items-center">Invoices</a>
-                            
-                          
-                            
+                        </div>
                     </div>
                     <div class="flex items-center">
                         <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
                             <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-xs font-bold uppercase hover:text-red-500 transition">
-                                👤 {{ Auth::user()->name }}
+                                <span class="hidden sm:inline">👤 {{ Auth::user()->name }}</span>
+                                <span class="sm:hidden text-lg">👤</span>
                                 <svg class="ms-1 fill-current h-4 w-4 text-red-600" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                             </button>
-                            <div x-show="dropdownOpen" class="absolute right-0 z-50 mt-2 w-48 rounded shadow-xl bg-card-dark border border-red-900 py-1 text-gray-300" style="display: none;">
+                            <div x-show="dropdownOpen" x-cloak class="absolute right-0 z-50 mt-2 w-48 rounded shadow-xl bg-card-dark border border-red-900 py-1 text-gray-300">
                                 <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm hover:bg-red-900 hover:text-white">Profile Settings</a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
@@ -136,8 +148,14 @@
                     </div>
                 </div>
             </div>
-        </nav>
 
+            <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-black border-t border-red-900 px-4 py-2 space-y-1">
+                <a href="#" @click.prevent="currentTab = 'dashboard'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Dashboard</a>
+                <a href="#" @click.prevent="showModal = true; step = 1; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Book Appointment</a>
+                <a href="#" @click.prevent="currentTab = 'myappointments'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">My Appointments</a>
+                <a href="#" @click.prevent="currentTab = 'invoices'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Invoices</a>
+            </div>
+        </nav>
         <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             
             <div x-show="currentTab === 'dashboard'">

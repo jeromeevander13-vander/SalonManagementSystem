@@ -143,6 +143,99 @@
             0% { opacity: 0; transform: scale(0.9) translateY(20px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
+
+        /* Card Container Base */
+    .service-card-container {
+        display: flex;
+        flex-direction: column; /* Stacked by default (Mobile) */
+        background: white;
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+    /* Professional Image Handling */
+    .service-image {
+        width: 100%;
+        height: 250px; /* Fixed height for uniformity */
+        object-fit: cover; /* Prevents stretching/squashing */
+        object-position: center;
+    }
+
+    /* Details Area */
+    .service-details {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex-grow: 1;
+    }
+
+    /* Desktop adjustment: Side-by-side layout */
+    @media (min-width: 768px) {
+        .service-card-container {
+            flex-direction: row; /* Side-by-side on desktop */
+            height: 300px;
+        }
+        .service-image {
+            width: 40%; /* Image takes 40% width on desktop */
+            height: 100%;
+        }
+        .service-details {
+            width: 60%;
+        }
+    }
+
+    /* Hidden items for the 'See More' logic */
+    .hidden-item {
+        display: none !important;
+    }
+
+    /* 1. Ensure the Grid behaves on Mobile */
+    #services-grid {
+        display: grid !important;
+        grid-template-cols: 1fr !important; /* Forces one column on mobile */
+        gap: 2rem !important;
+    }
+
+    /* 2. Fix the Visibility Logic */
+    /* Ensure hidden-item actually hides, but doesn't break the layout when shown */
+    .hidden-item {
+        display: none !important; 
+    }
+
+    /* When the JS removes 'hidden-item' and adds 'active', ensure it uses Flex */
+    .service-card-container.active {
+        display: flex !important; /* This overrides the 'none' display */
+    }
+
+    /* 3. Mobile Card Layout (Style Only) */
+    @media (max-width: 768px) {
+        .service-card-container {
+            flex-direction: column !important; /* Stacks image over text */
+            width: 100% !important;
+            min-height: auto !important;
+        }
+
+        .service-image {
+            width: 100% !important;
+            height: 250px !important;
+            object-fit: cover;
+        }
+
+        .service-details {
+            width: 100% !important;
+            padding: 20px !important;
+            text-align: left !important; /* Fixes the squeezed center-align */
+        }
+
+        /* Enhancing the tiny description text */
+        .service-details p.text-[10px] {
+            font-size: 14px !important; /* Larger for mobile eyes */
+            line-height: 1.5 !important;
+            text-transform: none !important; /* Easier to read than all-caps */
+        }
+    }
     </style>
 </head>
 
@@ -161,8 +254,23 @@
             <a href="{{ route('team') }}" class="{{ Request::is('team') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Team</a>
             <a href="{{ route('about') }}" class="{{ Request::is('about') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">About</a>
             <a href="{{ route('gallery') }}" class="{{ Request::is('gallery') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Gallery</a>
-            <a href="{{ route('register') }}" class="bg-red-600 text-white px-5 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
+          
+
+            
+                @auth
+                    <a href="{{ Auth::user()->role === 'admin' ? route('admin_main') : route('client_main') }}" class="hover:text-red-600 transition">Dashboard</a>
+                    
+                    <form method="POST" action="{{ route('logout') }}" class="inline m-0">
+                        @csrf
+                        <button type="submit" class="bg-gray-800 text-white px-4 py-2 hover:bg-red-600 transition uppercase font-bold text-[10px]">Logout</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="hover:text-red-600 transition">Login</a>
+                    <a href="{{ route('register') }}" class="bg-red-600 text-white px-4 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
+                @endauth
         </div>
+        
+        
 
         <button id="menu-toggle" class="md:hidden text-white focus:outline-none text-2xl">
             <i class="fas fa-bars"></i>
@@ -174,7 +282,17 @@
             <a href="{{ route('team') }}" class="py-3 border-b border-gray-800 text-[10px] uppercase font-bold tracking-widest">Team</a>
             <a href="{{ route('about') }}" class="py-3 border-b border-gray-800 text-[10px] uppercase font-bold tracking-widest">About</a>
             <a href="{{ route('gallery') }}" class="py-3 border-b border-gray-800 text-[10px] uppercase font-bold tracking-widest">Gallery</a>
-            <a href="{{ route('register') }}" class="mt-4 text-center bg-red-600 py-2 text-[10px] uppercase font-bold">Sign Up</a>
+            
+            @auth
+                    <a href="{{ Auth::user()->role === 'admin' ? route('admin_main') : route('client_main') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Dashboard</a>
+                    <form method="POST" action="{{ route('logout') }}" class="mt-4">
+                        @csrf
+                        <button type="submit" class="text-red-600 text-[10px] uppercase font-bold">Logout</button>
+                    </form>
+                @else
+                    <a href="{{ route('login') }}" class="py-2 border-b border-gray-800 text-[10px] uppercase tracking-widest">Login</a>
+                    <a href="{{ route('register') }}" class="py-2 text-[10px] uppercase tracking-widest">Sign Up</a>
+                @endauth
         </div>
     </nav>
 
@@ -186,6 +304,7 @@
         <p class="uppercase tracking-[0.3em] text-[10px] text-gray-400 font-bold mt-10">
             Experience the magic of transformation
         </p>
+        
     </div>
 </header>
 

@@ -26,38 +26,48 @@
         .status-accepted { background-color: #16a34a; color: #fff; }
         
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .mobile-title-text { font-size: 0.75rem; }
+        }
     </style>
 </head>
-<body class="font-sans antialiased bg-midnight text-gray-200" x-data="{ currentTab: 'dashboard' }">
+<body class="font-sans antialiased bg-midnight text-gray-200" x-data="{ currentTab: 'dashboard', mobileMenuOpen: false }">
     <div class="min-h-screen">
         <nav class="bg-black border-b border-red-900 text-white shadow-lg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-14">
                     <div class="flex items-center space-x-4">
+                        <div class="flex items-center md:hidden">
+                            <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-400 hover:text-white focus:outline-none">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                    <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
                         <div class="flex items-center space-x-2">
                             <span class="text-red-600 text-2xl font-bold italic">✂</span>
-                            <span class="text-lg font-black tracking-tighter uppercase italic">Tonet Salon Management System</span>
+                            <span class="text-lg font-black tracking-tighter uppercase italic mobile-title-text">Tonet Salon Management System</span>
                         </div>
-<div class="hidden md:flex space-x-1 ml-10 text-[10px] font-bold uppercase tracking-widest">
+
+                        <div class="hidden md:flex space-x-1 ml-10 text-[10px] font-bold uppercase tracking-widest">
                             <button @click="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">DASHBOARD</button>
                             <button @click="currentTab = 'appointments'" :class="currentTab === 'appointments' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">APPOINTMENTS</button>
                             <button @click="currentTab = 'services'" :class="currentTab === 'services' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">SERVICES</button>
-    
-    <button @click="currentTab = 'clients'" :class="currentTab === 'clients' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">CLIENTS</button>
-    
-    <button @click="currentTab = 'reports'" :class="currentTab === 'reports' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">REPORTS</button>
-    
-    <button @click="currentTab = 'inquiries'" :class="currentTab === 'inquiries' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">INQUIRIES</button>
-</div>
-                           
+                            <button @click="currentTab = 'clients'" :class="currentTab === 'clients' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">CLIENTS</button>
+                            <button @click="currentTab = 'reports'" :class="currentTab === 'reports' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">REPORTS</button>
+                            <button @click="currentTab = 'inquiries'" :class="currentTab === 'inquiries' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">INQUIRIES</button>
+                        </div>
                     </div>
 
-                        
                     <div class="flex items-center">
                         <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
                             <button @click="dropdownOpen = !dropdownOpen" class="flex items-center focus:outline-none group">
-                                <span class="text-xs font-bold uppercase mr-2 text-gray-400 italic group-hover:text-red-500 transition">Admin</span>
-                               <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-105">A</div>
+                                <span class="hidden sm:inline text-xs font-bold uppercase mr-2 text-gray-400 italic group-hover:text-red-500 transition">Admin</span>
+                                <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-105">A</div>
                             </button>
                             <div x-show="dropdownOpen" x-transition class="absolute right-0 z-50 mt-2 w-48 rounded bg-card-dark border border-red-900 py-1" style="display: none;">
                                 <form method="POST" action="{{ route('logout') }}">
@@ -67,6 +77,17 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-black border-t border-red-900">
+                <div class="px-2 pt-2 pb-3 space-y-1 text-[11px] font-bold uppercase tracking-widest">
+                    <button @click="currentTab = 'dashboard'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">DASHBOARD</button>
+                    <button @click="currentTab = 'appointments'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">APPOINTMENTS</button>
+                    <button @click="currentTab = 'services'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">SERVICES</button>
+                    <button @click="currentTab = 'clients'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">CLIENTS</button>
+                    <button @click="currentTab = 'reports'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">REPORTS</button>
+                    <button @click="currentTab = 'inquiries'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">INQUIRIES</button>
                 </div>
             </div>
         </nav>

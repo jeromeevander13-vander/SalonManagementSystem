@@ -215,41 +215,43 @@
 
      
 
-                <div class="bg-card-dark border border-red-900 rounded shadow-2xl overflow-hidden">
-                    <div class="bg-red-900 bg-opacity-40 border-b border-red-900 px-6 py-3">
-                        <h3 class="font-black text-white uppercase italic text-[10px] tracking-[0.2em]">All Appointments</h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead>
-                                <tr class="border-b border-red-900 text-[10px] font-black uppercase tracking-widest text-red-500 italic">
-                                    <th class="px-6 py-4">Customer</th>
-                                    <th class="px-6 py-4">phone</th>
-                                    <th class="px-6 py-4">Date & Time</th>
-                                    <th class="px-6 py-4">Status</th>
-                                    <th class="px-6 py-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                 @foreach ($data as $datas)
-                                <tr>
-                                       
-                                             <td  class=" text-center text-white font-bold uppercase text-[10px] tracking-[0.4em] italic">
-                                                {{$datas->customer_name}}
-                                            </td>
-                                            <td  class=" text-center text-white font-bold uppercase text-[10px] tracking-[0.4em] italic">
-                                                {{$datas->phone}}
-                                            </td>
-                                            <td  class=" text-center text-white font-bold uppercase text-[10px] tracking-[0.4em] italic">
-                                                {{$datas->appointment_time}}
-                                            </td>
-                                            <td  class=" text-center text-white font-bold uppercase text-[10px] tracking-[0.4em] italic">
-                                                {{$datas->status}}
-                                            </td>
-                                            <td  class=" text-center text-white font-bold uppercase text-[10px] tracking-[0.4em] italic">
-                                                <a href="{{ route('admin.edit', $datas->id) }}" class="text-red-500 hover:text-red-400">Update</a> 
-                                                
-                                            </td>
+              <div class="bg-card-dark border border-red-900 rounded shadow-2xl overflow-hidden">
+    <div class="bg-red-900 bg-opacity-40 border-b border-red-900 px-6 py-3">
+        <h3 class="font-black text-white uppercase italic text-[10px] tracking-[0.2em]">All Appointments</h3>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="border-b border-red-900 text-[10px] font-black uppercase tracking-widest text-red-500 italic">
+                    <th class="px-6 py-4">Customer</th>
+                    <th class="px-6 py-4">phone</th>
+                    <th class="px-6 py-4">Service</th>
+                    <th class="px-6 py-4">Date & Time</th>
+                    <th class="px-6 py-4">Status</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($data as $datas)
+                <tr class="border-b border-red-900/10 hover:bg-white/5 transition-colors">
+                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                        {{$datas->customer_name}}
+                    </td>
+                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                        {{$datas->phone}}
+                    </td>
+                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                        {{$datas->service_type}}
+                    </td>
+                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                        {{$datas->appointment_time}}
+                    </td>
+                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                        {{$datas->status}}
+                    </td>
+                    <td class="px-6 py-4 text-right text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                        <a href="{{ route('admin.edit', $datas->id) }}" class="text-red-500 hover:text-red-400">Update</a> 
+                    </td>
                                         
                                    
                                 </tr>

@@ -28,6 +28,7 @@ class admincontroller extends Controller
             'appointment_time' => 'required', // This is the 09:00:00 string
             'status'           => 'required|string',
             'message'          => 'nullable|string',
+            'service_type'     => 'nullable|string|max:255',
         ]);
 
         // Combine Date + Time for your single DB column

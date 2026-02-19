@@ -333,6 +333,13 @@
         </select>
     </div>
 
+    
+    <div>
+        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Services</label>
+        <input type="text" name="service_type" x-model="bookingData.service_type" placeholder="e.g., Haircut, Coloring" required
+            class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
+    </div>
+
     <div>
         <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Phone Number</label>
         <input type="text" name="phone" x-model="bookingData.phone" placeholder="0912 345 6789" required

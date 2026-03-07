@@ -29,15 +29,17 @@ Route::view('/gallery', 'gallery')->name('gallery');
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified'])->group(function() {
+Route::middleware(['auth'])->group(function () {
     
-    // SMART REDIRECT
-    Route::get('/redirect', function() {
-        if (Auth::user()->can('acces-admin')) {
-            return redirect()->route('admin_main');
-        }
-        return redirect()->route('client_main');
-    })->name('user.redirect');
+    // This fixes the 'admin_main' error
+    Route::get('/admin/dashboard', [adminController::class, 'index'])
+        ->name('admin_main');
+
+    // This fixes the 'client_main' error
+    Route::get('/client/home', [ClientController::class, 'index'])
+        ->name('client_main');
+        
+});
 
     // Admin Dashboard
     // Route::get('/admin', function() { 
@@ -54,13 +56,10 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/admin/invoices', [InvoiceController::class, 'index'])->name('admin.invoices');
     Route::get('/admin/inquiries', [InquiryController::class, 'index'])->name('admin.inquiries');
 
-Route::get('/client', function () { 
-    return view('client.dashboard'); 
-})->name('client_main')->middleware('can:acces-client');
+
      Route::get('/client/myappointments', [myappointments::class, 'index'])->name('client.appointments');
     Route::get('/client/invoices', [invoices::class, 'index'])->name('client.invoices');
     Route::get('/client/services', [services::class, 'index'])->name('client.services');
-
 
 
 // The Booking Logic (This is POST only)
@@ -71,6 +70,6 @@ Route::post('/book-appointment', [AppointmentController::class, 'store'])->name(
         Route::patch('/profile', 'update')->name('profile.update');
         Route::delete('/profile', 'destroy')->name('profile.destroy');
     });
-});
+
 
 require __DIR__.'/auth.php';

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,6 +12,12 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
+        /* Ensure the body doesn't hide the sticky nav context */
+        html, body {
+            height: 100%;
+            scroll-padding-top: 4rem; /* Matches the height of your navbar */
+        }
+
         .bg-midnight { background-color: #0a0a0a; }
         .bg-card-dark { background-color: #141414; }
         .border-red-900 { border-color: #450a0a; }
@@ -34,10 +40,11 @@
     </style>
 </head>
 <body class="font-sans antialiased bg-midnight text-gray-200" x-data="{ currentTab: 'dashboard', mobileMenuOpen: false }">
-    <div class="min-h-screen">
-        <nav class="bg-black border-b border-red-900 text-white shadow-lg">
+    <div class="min-h-screen flex flex-col">
+        
+        <nav class="sticky top-0 z-50 bg-black border-b border-red-900 text-white shadow-2xl">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-14">
+                <div class="flex justify-between h-16">
                     <div class="flex items-center space-x-4">
                         <div class="flex items-center md:hidden">
                             <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-400 hover:text-white focus:outline-none">
@@ -69,7 +76,7 @@
                                 <span class="hidden sm:inline text-xs font-bold uppercase mr-2 text-gray-400 italic group-hover:text-red-500 transition">Admin</span>
                                 <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-105">A</div>
                             </button>
-                            <div x-show="dropdownOpen" x-transition class="absolute right-0 z-50 mt-2 w-48 rounded bg-card-dark border border-red-900 py-1" style="display: none;">
+                            <div x-show="dropdownOpen" x-transition class="absolute right-0 z-50 mt-2 w-48 rounded bg-card-dark border border-red-900 py-1" x-cloak>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-900 hover:text-white font-bold transition">Log Out</button>
@@ -92,8 +99,7 @@
             </div>
         </nav>
 
-        
-        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex-grow">
             
             <div x-show="currentTab === 'dashboard'">
                 <div class="mb-8">
@@ -170,21 +176,23 @@
                     </div>
                 </div>
             </div>
-                <div x-show="currentTab === 'services'" x-cloak>
-    @include('admin.services')
-</div>
 
-<div x-show="currentTab === 'clients'" x-cloak>
-    @include('admin.clients')
-</div>
+            <div x-show="currentTab === 'services'" x-cloak>
+                @include('admin.services')
+            </div>
 
-<div x-show="currentTab === 'reports'" x-cloak>
-    @include('admin.reports')
-</div>
+            <div x-show="currentTab === 'clients'" x-cloak>
+                @include('admin.clients')
+            </div>
 
-<div x-show="currentTab === 'inquiries'" x-cloak>
-    @include('admin.inquiries')
-</div>
+            <div x-show="currentTab === 'reports'" x-cloak>
+                @include('admin.reports')
+            </div>
+
+            <div x-show="currentTab === 'inquiries'" x-cloak>
+                @include('admin.inquiries')
+            </div>
+
             <div x-show="currentTab === 'appointments'" x-cloak>
                 <div class="mb-8">
                     <h1 class="text-3xl font-black text-white uppercase italic">Manage Appointments</h1>
@@ -213,47 +221,43 @@
                     </div>
                 </div>
 
-     
-
-              <div class="bg-card-dark border border-red-900 rounded shadow-2xl overflow-hidden">
-    <div class="bg-red-900 bg-opacity-40 border-b border-red-900 px-6 py-3">
-        <h3 class="font-black text-white uppercase italic text-[10px] tracking-[0.2em]">All Appointments</h3>
-    </div>
-    <div class="overflow-x-auto">
-        <table class="w-full text-left">
-            <thead>
-                <tr class="border-b border-red-900 text-[10px] font-black uppercase tracking-widest text-red-500 italic">
-                    <th class="px-6 py-4">Customer</th>
-                    <th class="px-6 py-4">phone</th>
-                    <th class="px-6 py-4">Service</th>
-                    <th class="px-6 py-4">Date & Time</th>
-                    <th class="px-6 py-4">Status</th>
-                    <th class="px-6 py-4 text-right">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($data as $datas)
-                <tr class="border-b border-red-900/10 hover:bg-white/5 transition-colors">
-                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
-                        {{$datas->customer_name}}
-                    </td>
-                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
-                        {{$datas->phone}}
-                    </td>
-                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
-                        {{$datas->service_type}}
-                    </td>
-                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
-                        {{$datas->appointment_time}}
-                    </td>
-                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
-                        {{$datas->status}}
-                    </td>
-                    <td class="px-6 py-4 text-right text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
-                        <a href="{{ route('admin.edit', $datas->id) }}" class="text-red-500 hover:text-red-400">Update</a> 
-                    </td>
-                                        
-                                   
+                <div class="bg-card-dark border border-red-900 rounded shadow-2xl overflow-hidden">
+                    <div class="bg-red-900 bg-opacity-40 border-b border-red-900 px-6 py-3">
+                        <h3 class="font-black text-white uppercase italic text-[10px] tracking-[0.2em]">All Appointments</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-red-900 text-[10px] font-black uppercase tracking-widest text-red-500 italic">
+                                    <th class="px-6 py-4">Customer</th>
+                                    <th class="px-6 py-4">phone</th>
+                                    <th class="px-6 py-4">Service</th>
+                                    <th class="px-6 py-4">Date & Time</th>
+                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($data as $datas)
+                                <tr class="border-b border-red-900/10 hover:bg-white/5 transition-colors">
+                                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                                        {{$datas->customer_name}}
+                                    </td>
+                                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                                        {{$datas->phone}}
+                                    </td>
+                                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                                        {{$datas->service_type}}
+                                    </td>
+                                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                                        {{$datas->appointment_time}}
+                                    </td>
+                                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                                        {{$datas->status}}
+                                    </td>
+                                    <td class="px-6 py-4 text-right text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
+                                        <a href="{{ route('admin.edit', $datas->id) }}" class="text-red-500 hover:text-red-400">Update</a> 
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>

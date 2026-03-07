@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class admincontroller extends Controller
 {
     //
     public function index()
-    {
+    {   
+         $user = User::where('role', 'admin')->get();
         $data = Appointment::get();
-        return view("admin.dashboard", compact("data"));
+        return view("admin.dashboard", compact("data", "user"));
     }
 
     public function edit(Appointment $appointment)

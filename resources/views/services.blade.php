@@ -6,71 +6,72 @@
     <title>Tonet Salon | Services</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        .services-header {
-            background-color: #000;
-            background-image: linear-gradient(to bottom, #1a1a1a 0%, #000 100%);
-            padding-bottom: 60px;
+        /* --- 1. CORE LAYOUT & NAVIGATION --- */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0b0b;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
 
-        .hero-title {
-            font-size: clamp(2.5rem, 7vw, 5rem); 
-            line-height: 0.75; 
-            letter-spacing: -0.04em; 
-            font-weight: 950;
-            transform: scaleY(1.4); 
-            transform-origin: center;
-            margin: 40px 0;
-        }
-
-        .nav-active {
-            border-bottom: 3px solid #ff0000; 
-            padding-bottom: 2px;
-        }
-
-        .white-icon {
-            filter: brightness(0) invert(1);
-        }
-        
-       /* 2. NAVIGATION & MOBILE MENU */
         nav.fixed-top {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 9999;
+            z-index: 10000;
             background-color: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255,0,0,0.2); 
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 0, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        nav.fixed-top.scrolled {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            background-color: #000;
+            border-bottom: 1px solid rgba(220, 38, 38, 0.5);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+
+        .nav-active {
+            border-bottom: 2px solid #dc2626;
+            color: #dc2626 !important;
         }
 
         .white-icon { filter: brightness(0) invert(1); }
 
-        #mobile-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.98);
-            z-index: 9998;
+        /* --- 2. HERO SECTION --- */
+        .services-header {
+            min-height: 60vh;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            justify-content: center;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            padding-top: 80px; /* Offset for sticky nav */
+            text-align: center;
         }
-        #mobile-menu.active { opacity: 1; visibility: visible; }
-        .mobile-link { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; color: white; margin: 15px 0; text-decoration: none; letter-spacing: -0.05em; }
 
+        .hero-title {
+            font-size: clamp(3rem, 12vw, 8rem);
+            font-weight: 950;
+            font-style: italic;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            line-height: 0.85;
+            margin: 0;
+            color: white;
+        }
 
-
-        /* Original Animations */
+        /* --- 3. DASHBOARD CARDS & ANIMATIONS --- */
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(40px);
             transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
         }
 
@@ -79,268 +80,99 @@
             transform: translateY(0);
         }
 
-        .service-card-container {
-            display: flex;
-            background-color: #cacaca; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            height: 250px; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            border: 1px solid transparent;
+        .dashboard-panel {
+            background: #000;
+            border: 1px solid #27272a;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Mobile adjustment for cards */
-        @media (max-width: 640px) {
-            .service-card-container {
-                flex-direction: column;
-                height: auto;
-            }
-            .service-image, .service-details {
-                width: 100%;
-            }
-            .service-image {
-                height: 200px;
-                border-right: none;
-                border-bottom: 1px solid #bbb;
-            }
+        .thumb-btn {
+            transition: all 0.3s ease;
+            filter: grayscale(100%);
         }
 
-        .service-card-container:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-            background-color: #d1d1d1;
-            border-color: #ff0000;
-        }
-
-        .service-image {
-            width: 50%;
-            height: 100%;
-            object-fit: cover;
-            border-right: 1px solid #bbb;
-            transition: transform 0.6s ease;
-        }
-
-        .service-card-container:hover .service-image {
+        .thumb-btn:hover, .thumb-btn.active-thumb {
+            filter: grayscale(0%);
             transform: scale(1.1);
+            border-color: #dc2626;
+            z-index: 10;
         }
 
-        .service-details {
-            width: 50%;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+        @media (max-width: 768px) {
+            .hero-title { font-size: 4rem; }
         }
-
-        .hidden-item { display: none !important; }
-
-        .see-more-wrapper {
-            display: flex;
-            justify-content: center;
-            margin-top: 40px;
-            width: 100%;
-        }
-
-        .btn-see-more {
-            background-color: #ff0000;
-            color: white;
-            padding: 12px 30px;
-            font-weight: 900;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn-see-more:hover { background-color: #000; }
-
-        @keyframes cardAppear {
-            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        /* Card Container Base */
-    .service-card-container {
-        display: flex;
-        flex-direction: column; /* Stacked by default (Mobile) */
-        background: white;
-        border: 1px solid #e5e7eb;
-        overflow: hidden;
-        transition: transform 0.3s ease;
-    }
-
-    /* Professional Image Handling */
-    .service-image {
-        width: 100%;
-        height: 250px; /* Fixed height for uniformity */
-        object-fit: cover; /* Prevents stretching/squashing */
-        object-position: center;
-    }
-
-    /* Details Area */
-    .service-details {
-        padding: 1.5rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        flex-grow: 1;
-    }
-
-    /* Desktop adjustment: Side-by-side layout */
-    @media (min-width: 768px) {
-        .service-card-container {
-            flex-direction: row; /* Side-by-side on desktop */
-            height: 300px;
-        }
-        .service-image {
-            width: 40%; /* Image takes 40% width on desktop */
-            height: 100%;
-        }
-        .service-details {
-            width: 60%;
-        }
-    }
-
-    /* Hidden items for the 'See More' logic */
-    .hidden-item {
-        display: none !important;
-    }
-
-    /* 1. Ensure the Grid behaves on Mobile */
-    #services-grid {
-        display: grid !important;
-        grid-template-cols: 1fr !important; /* Forces one column on mobile */
-        gap: 2rem !important;
-    }
-
-    /* 2. Fix the Visibility Logic */
-    /* Ensure hidden-item actually hides, but doesn't break the layout when shown */
-    .hidden-item {
-        display: none !important; 
-    }
-
-    /* When the JS removes 'hidden-item' and adds 'active', ensure it uses Flex */
-    .service-card-container.active {
-        display: flex !important; /* This overrides the 'none' display */
-    }
-
-    /* 3. Mobile Card Layout (Style Only) */
-    @media (max-width: 768px) {
-        .service-card-container {
-            flex-direction: column !important; /* Stacks image over text */
-            width: 100% !important;
-            min-height: auto !important;
-        }
-
-        .service-image {
-            width: 100% !important;
-            height: 250px !important;
-            object-fit: cover;
-        }
-
-        .service-details {
-            width: 100% !important;
-            padding: 20px !important;
-            text-align: left !important; /* Fixes the squeezed center-align */
-        }
-
-        /* Enhancing the tiny description text */
-        .service-details p.text-[10px] {
-            font-size: 14px !important; /* Larger for mobile eyes */
-            line-height: 1.5 !important;
-            text-transform: none !important; /* Easier to read than all-caps */
-
-        }
-        
-        /* Mobile Menu */
-        #mobile-menu { display: none; transition: 0.3s ease; }
-        #mobile-menu.active { display: flex; }
-
-    }
     </style>
 </head>
 
-<body class="bg-[#efefef] font-sans antialiased">
+<body class="antialiased">
 
-<header class="services-header text-white">
-    <nav class="max-w-7xl mx-auto w-full px-6 py-5 flex justify-between items-center relative z-30">
-        <div class="flex items-center gap-3">
-            <img src="{{ asset('images/woman-with-long-hair.png') }}" alt="Logo" class="w-8 h-8 object-contain white-icon">
-            <span class="font-black text-xl tracking-tighter uppercase italic leading-none">TONET SALON</span>
-        </div>
-        
-        <div class="hidden md:flex items-center space-x-8 text-[11px] font-black uppercase tracking-widest text-gray-300">
-            <a href="{{ route('home') }}" class="{{ Request::is('/') ? 'text-white nav-active' : 'hover:text-white transition' }}">Home</a>
-            <a href="{{ route('services') }}" class="{{ Request::is('services') ? 'text-white nav-active' : 'hover:text-red-600 transition' }}">Services</a>
-           
-
+    <nav class="fixed-top">
+        <div class="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="{{ asset('images/woman-with-long-hair.png') }}" alt="Logo" class="w-8 h-8 object-contain white-icon">
+                <span class="font-black text-xl tracking-tighter uppercase italic leading-none text-white">TONET SALON</span>
+            </div>
             
+            <div class="hidden md:flex items-center space-x-8 text-[11px] font-black uppercase tracking-widest">
+                <a href="{{ route('home') }}" class="{{ Request::is('/') ? 'nav-active' : 'text-gray-400 hover:text-white transition' }}">Home</a>
+                <a href="{{ route('services') }}" class="{{ Request::is('services') ? 'nav-active' : 'text-gray-400 hover:text-white transition' }}">Services</a>
+
                 @auth
-                    <a href="{{ Auth::user()->role === 'admin' ? route('admin_main') : route('client_main') }}" class="hover:text-red-600 transition">Dashboard</a>
-                    
+                    <a href="{{ Auth::user()->role === 'admin' ? route('admin_main') : route('client_main') }}" class="text-gray-400 hover:text-red-600 transition">Dashboard</a>
                     <form method="POST" action="{{ route('logout') }}" class="inline m-0">
                         @csrf
-                        <button type="submit" class="bg-gray-800 text-white px-4 py-2 hover:bg-red-600 transition uppercase font-bold text-[10px]">Logout</button>
+                        <button type="submit" class="bg-zinc-800 text-white px-4 py-2 hover:bg-red-600 transition uppercase font-bold text-[10px]">Logout</button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="hover:text-red-600 transition">Login</a>
-                      <a href="{{ route('register') }}" class="bg-red-600 px-5 py-2 hover:bg-white hover:text-black transition">Join Us</a>
+                    <a href="{{ route('login') }}" class="text-gray-400 hover:text-red-600 transition">Login</a>
+                    <a href="{{ route('register') }}" class="bg-red-600 px-5 py-2 text-white hover:bg-white hover:text-black transition">Join Us</a>
                 @endauth
+            </div>
         </div>
-        
-        
-
-        <button id="menu-toggle" class="md:hidden text-white focus:outline-none text-2xl">
-            <i class="fas fa-bars"></i>
-        </button>
-
-            <div id="mobile-menu">
-        <a href="{{ route('home') }}" class="mobile-link text-red-600">Home</a>
-        <a href="{{ route('services') }}" class="mobile-link">Services</a>
-        @auth
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn-main mt-10">Logout</button>
-            </form>
-        @else
-            <a href="{{ route('login') }}" class="mobile-link">Login</a>
-            <a href="{{ route('register') }}" class="btn-main mt-10">Join Us </a>
-        @endauth
-    </div>
-
     </nav>
 
-    <div class="text-center mt-16">
-        <h1 class="hero-title uppercase italic">
-            OUR PREMIUM<br>
-            <span class="text-red-600 not-italic">SERVICES</span>
-        </h1>
-        <p class="uppercase tracking-[0.3em] text-[10px] text-gray-400 font-bold mt-10">
-            Experience the magic of transformation
-        </p>
-        
-    </div>
-</header>
+    <header class="services-header">
+        <div class="reveal">
+            <h1 class="hero-title">OUR<br><span class="text-red-600">SERVICES</span></h1>
+            <div class="w-24 h-1 bg-red-600 mx-auto mt-6"></div>
+            <p class="text-zinc-500 uppercase tracking-[0.4em] text-[10px] mt-8 font-bold">Experience the Magic of Transformation</p>
+        </div>
+    </header>
 
-<script>
-    // Toggle script for mobile menu
-    document.getElementById('menu-toggle').addEventListener('click', function() {
-        const menu = document.getElementById('mobile-menu');
-        menu.classList.toggle('active');
-        
-        // Toggle between bars and X icon
-        const icon = this.querySelector('i');
-        icon.classList.toggle('fa-bars');
-        icon.classList.toggle('fa-times');
-    });
-</script>
+    
+    <script>
+        // Navbar Scrolled Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav.fixed-top');
+            window.scrollY > 50 ? nav.classList.add('scrolled') : nav.classList.remove('scrolled');
+            
+            // Reveal items
+            document.querySelectorAll('.reveal').forEach(el => {
+                if(el.getBoundingClientRect().top < window.innerHeight - 100) el.classList.add('active');
+            });
+        });
+
+        // Function to update display (Example for Hair section)
+        function updateHair(img, title, price, desc) {
+            document.getElementById('hair-main-img').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('hair-main-img').src = `/images/${img}`;
+                document.getElementById('hair-main-img').style.opacity = '1';
+                document.getElementById('hair-title').innerText = title;
+                document.getElementById('hair-price').innerText = price;
+                document.getElementById('hair-desc').innerText = desc;
+            }, 300);
+        }
+
+        // Trigger reveal on load
+        window.dispatchEvent(new Event('scroll'));
+    </script>
+
     <main class="bg-[#0b0b0b] min-h-screen text-white font-sans py-12 px-4 md:px-10 overflow-x-hidden">
     <div class="max-w-7xl mx-auto">
         
         <div class="flex items-start gap-4 mb-16 animate-slide-in">
-            <div class="w-1 h-20 bg-red-600"></div>
+            
             <div>
                
                 <div class="flex flex-col items-center justify-center text-center w-full mb-20 animate-slide-in">

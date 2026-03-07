@@ -183,6 +183,7 @@
             opacity: 1;
             transform: translateY(0);
         }
+        
     </style>
 </head>
 <body class="antialiased text-white">

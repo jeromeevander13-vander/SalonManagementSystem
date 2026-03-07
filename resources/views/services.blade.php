@@ -1,3 +1,8 @@
+@php
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
+@endphp
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,6 +51,38 @@
 
         .white-icon { filter: brightness(0) invert(1); }
 
+        /* --- MOBILE MENU STYLING --- */
+        #mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.98);
+            z-index: 9998;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #mobile-menu.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .mobile-link {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: white;
+            margin: 15px 0;
+            text-decoration: none;
+            letter-spacing: -0.05em;
+        }
+
         /* --- 2. HERO SECTION --- */
         .services-header {
             min-height: 60vh;
@@ -53,7 +90,7 @@
             align-items: center;
             justify-content: center;
             background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-            padding-top: 80px; /* Offset for sticky nav */
+            padding-top: 80px; 
             text-align: center;
         }
 
@@ -66,36 +103,6 @@
             line-height: 0.85;
             margin: 0;
             color: white;
-        }
-
-        /* --- 3. DASHBOARD CARDS & ANIMATIONS --- */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
-        }
-
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .dashboard-panel {
-            background: #000;
-            border: 1px solid #27272a;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .thumb-btn {
-            transition: all 0.3s ease;
-            filter: grayscale(100%);
-        }
-
-        .thumb-btn:hover, .thumb-btn.active-thumb {
-            filter: grayscale(0%);
-            transform: scale(1.1);
-            border-color: #dc2626;
-            z-index: 10;
         }
 
         @media (max-width: 768px) {
@@ -128,17 +135,67 @@
                     <a href="{{ route('register') }}" class="bg-red-600 px-5 py-2 text-white hover:bg-white hover:text-black transition">Join Us</a>
                 @endauth
             </div>
+
+            <button id="menu-toggle" class="md:hidden text-white text-2xl focus:outline-none z-[9999]">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </nav>
 
+    <div id="mobile-menu">
+        <a href="{{ route('home') }}" class="mobile-link {{ Request::is('/') ? 'text-red-600' : '' }}">Home</a>
+        <a href="{{ route('services') }}" class="mobile-link {{ Request::is('services') ? 'text-red-600' : '' }}">Services</a>
+        @auth
+            <a href="{{ Auth::user()->role === 'admin' ? route('admin_main') : route('client_main') }}" class="mobile-link">Dashboard</a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="mt-10 bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest">Logout</button>
+            </form>
+        @else
+            <a href="{{ route('login') }}" class="mobile-link">Login</a>
+            <a href="{{ route('register') }}" class="mt-10 bg-red-600 text-white px-10 py-4 font-black uppercase tracking-widest">Join Us</a>
+        @endauth
+    </div>
+
     <header class="services-header">
-        <div class="reveal">
+        <div>
             <h1 class="hero-title">OUR<br><span class="text-red-600">SERVICES</span></h1>
             <div class="w-24 h-1 bg-red-600 mx-auto mt-6"></div>
-            <p class="text-zinc-500 uppercase tracking-[0.4em] text-[10px] mt-8 font-bold">Experience the Magic of Transformation</p>
         </div>
     </header>
 
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const icon = menuToggle.querySelector('i');
+
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            
+            // Toggle icon bars vs X
+            if (mobileMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav.fixed-top');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+    </script>
+
+   
     
     <script>
         // Navbar Scrolled Effect

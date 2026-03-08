@@ -39,7 +39,7 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased bg-midnight text-gray-200" x-data="{ currentTab: 'dashboard', mobileMenuOpen: false }">
+<body class="font-sans antialiased bg-midnight text-gray-200" x-data="{ currentTab: 'dashboard', mobileMenuOpen: false, showModal: false, selectedAppointment: {} }">
     <div class="min-h-screen flex flex-col">
         
         <nav class="sticky top-0 z-50 bg-black border-b border-red-900 text-white shadow-2xl">
@@ -256,7 +256,7 @@
                                         {{$datas->status}}
                                     </td>
                                     <td class="px-6 py-4 text-right text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
-                                        <a href="{{ route('admin.edit', $datas->id) }}" class="text-red-500 hover:text-red-400">Update</a> 
+                                        <button @click="selectedAppointment = { id: '{{ $datas->id }}', name: '{{ $datas->customer_name }}', phone: '{{ $datas->phone }}', status: '{{ $datas->status }}', message: '{{ $datas->message }}' }; showModal = true" class="text-red-500 hover:text-red-400 cursor-pointer">Update</button>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -266,6 +266,82 @@
                 </div>
             </div>
         </main>
+
+        <div x-show="showModal" 
+             class="fixed inset-0 z-[60] overflow-y-auto flex items-center justify-center p-4" 
+             x-cloak>
+            
+            <div class="fixed inset-0 bg-black bg-opacity-80 transition-opacity" @click="showModal = false"></div>
+
+            <div class="relative w-full max-w-md bg-[#0a0a0a] border border-[#3a0a0a] rounded-xl p-8 shadow-2xl flex flex-col gap-6" @click.stop>
+                
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h2 class="text-3xl font-black text-white uppercase tracking-tighter">Edit Session</h2>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">
+                            Appointment ID: #<span x-text="selectedAppointment.id"></span>
+                        </p>
+                    </div>
+                    <div class="border border-green-800 text-green-500 text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full bg-[#0a2e16]/30">
+                        <span x-text="selectedAppointment.status"></span>
+                    </div>
+                </div>
+
+                <form :action="'/admin/update/' + selectedAppointment.id" method="POST" class="flex flex-col gap-5">
+                    @csrf
+                    @method('PUT')
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Update Status</label>
+                        <select name="status" x-model="selectedAppointment.status" class="w-full bg-[#111] border border-[#222] text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-red-900 transition appearance-none">
+                            <option value="Confirmed">Confirmed</option>
+                            <option value="Accepted">Accepted</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-red-600 mb-2 tracking-widest">Date</label>
+                            <input type="date" name="date" class="w-full bg-[#111] border border-[#222] text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-red-900 transition">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold uppercase text-red-600 mb-2 tracking-widest">Time Slot</label>
+                            <select name="time_slot" class="w-full bg-[#111] border border-[#222] text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-red-900 transition appearance-none">
+                                <option>09:00 AM</option>
+                                <option>10:00 AM</option>
+                                <option>11:00 AM</option>
+                                <option>01:00 PM</option>
+                                <option>02:00 PM</option>
+                                <option>03:00 PM</option>
+                                <option>04:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Contact Number</label>
+                        <input type="text" name="phone" x-model="selectedAppointment.phone" class="w-full bg-[#111] border border-[#222] text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-red-900 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Notes / Special Requests</label>
+                        <textarea name="message" x-model="selectedAppointment.message" rows="3" class="w-full bg-[#111] border border-[#222] text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-red-900 transition resize-none"></textarea>
+                    </div>
+
+                    <div class="mt-4 flex flex-col gap-4">
+                        <button type="submit" class="w-full bg-[#b91c1c] hover:bg-red-700 text-white text-sm font-black uppercase tracking-widest py-4 rounded-lg transition shadow-lg">
+                            Confirm Changes
+                        </button>
+                        <button type="button" @click="showModal = false" class="text-center text-[10px] font-bold uppercase text-gray-500 hover:text-white transition tracking-widest">
+                            Discard and go back
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
     </div>
 </body>

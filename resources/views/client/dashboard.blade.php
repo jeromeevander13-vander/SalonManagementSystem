@@ -14,9 +14,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
-        /* Added x-cloak style to prevent flashing before Alpine loads */
         [x-cloak] { display: none !important; }
-
         .bg-dark-home { background-color: #121212; }
         .bg-card-dark { background-color: #1e1e1e; }
         .border-dark-red { border-color: #3d0a0a; }
@@ -24,21 +22,18 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 10px; }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
 
-        /* HOVER TRANSITION FOR SESSIONS */
         .session-info {
             max-height: 0;
             opacity: 0;
             overflow: hidden;
             transition: all 0.4s ease-in-out;
         }
-        /* When hovering the price container, reveal the session info */
         .price-container:hover .session-info {
-            max-height: 100px; /* Adjust if list is very long */
+            max-height: 100px;
             opacity: 1;
             margin-top: 0.5rem;
         }
 
-        /* MOBILE FIX FOR SQUEEZED TEXT */
         @media (max-width: 640px) {
             .mobile-title { font-size: 0.75rem !important; line-height: 1.2; }
         }
@@ -54,8 +49,15 @@
     selectedPrice: '',
     selectedDuration: '',
     
+    bookingData: {
+        service_type: '',
+        date: '',
+        time: '09:00:00',
+        phone: '',
+        message: ''
+    },
+    
     services: [
-        // HAIR COLOR & REBOND
         { category: 'HAIR COLOR & REBOND', name: 'REBOND BRAZILLIAN BOTOX', price: '₱2,000.00', duration: '3-4 hrs', img: '{{ asset('images/rebond1.jpg') }}', desc: 'ALL-IN-ONE TREATMENT PERMANENTLY STRAIGHTENS AND REPAIRS.', sessions: null },
         { category: 'HAIR COLOR & REBOND', name: 'REBOND BOTOX COLOR', price: '₱2,500.00', duration: '4-5 hrs', img: '{{ asset('images/rebond2.jpg') }}', desc: 'STRAIGHTENS, REPAIRS, AND ADDS VIBRANT COLOR.', sessions: null },
         { category: 'HAIR COLOR & REBOND', name: 'COLOR (SHORT)', price: '₱500.00', duration: '1.5 hrs', img: '{{ asset('images/rebond3.jpg') }}', desc: 'PROFESSIONAL COLORING FOR SHORTER LENGTHS.', sessions: null },
@@ -70,30 +72,25 @@
         { category: 'HAIR COLOR & REBOND', name: 'CELLOPHANE TREATMENT', price: '₱500.00', duration: '1 hr', img: '{{ asset('images/rebond12.png') }}', desc: 'CHEMICAL-FREE SEMI-PERMANENT GLOSS AND SHINE.', sessions: null },
         { category: 'HAIR COLOR & REBOND', name: 'BRAZILLIAN BOTOX TREATMENT', price: '₱800.00', duration: '1.5 hrs', img: '{{ asset('images/rebond13.png') }}', desc: 'ELIMINATES FRIZZ AND REPAIRS HAIR FIBERS.', sessions: null },
 
-        // RF SLIMMING & CONTOUR (WITH SESSIONS)
         { category: 'RF SLIMMING & CONTOUR', name: 'RF FACE', price: '₱229.00', duration: '30 mins', img: '{{ asset('images/rf1.png') }}', desc: 'NON-INVASIVE SKIN TIGHTENING AND FACIAL CONTOURING.', sessions: ['5 SESSIONS: ₱1,030.00', '12 SESSIONS: ₱2,418.00'] },
         { category: 'RF SLIMMING & CONTOUR', name: 'RF ARMS W/ CAVITATION', price: '₱429.00', duration: '45 mins', img: '{{ asset('images/rf2.png') }}', desc: 'FIRM LOOSE SKIN AND SCULPT UPPER ARMS.', sessions: ['5 SESSIONS: ₱1,930.00', '12 SESSIONS: ₱4,350.00'] },
         { category: 'RF SLIMMING & CONTOUR', name: 'RF TUMMY W/ CAVITATION', price: '₱519.00', duration: '45 mins', img: '{{ asset('images/rf3.png') }}', desc: 'FIRMS ABDOMINAL AREA FOR A TIGHTER WAISTLINE.', sessions: ['5 SESSIONS: ₱2,335.00', '12 SESSIONS: ₱5,480.00'] },
         { category: 'RF SLIMMING & CONTOUR', name: 'RF LEGS W/ CAVITATION', price: '₱519.00', duration: '45 mins', img: '{{ asset('images/rf4.png') }}', desc: 'REDUCE CELLULITE AND CONTOUR THE LEGS.', sessions: ['5 SESSIONS: ₱2,335.00', '12 SESSIONS: ₱5,480.00'] },
 
-        // EYEBROWS (WITH SESSIONS)
         { category: 'EYEBROWS', name: 'MICRO SHADING', price: '₱1,299.00', duration: '2 hrs', img: '{{ asset('images/eyebrows1.png') }}', desc: 'SOFT, POWDERED MAKEUP LOOK FOR SPARSE BROWS.', sessions: ['2 SESSIONS: ₱2,399.00'] },
         { category: 'EYEBROWS', name: 'MICRO BLADING/OMBRE', price: '₱1,299.00', duration: '2.5 hrs', img: '{{ asset('images/eyebrows2.png') }}', desc: 'FINE STROKES FOR NATURAL-LOOKING HAIR GRADIENTS.', sessions: ['2 SESSIONS: ₱2,399.00'] },
         { category: 'EYEBROWS', name: 'COMBO BROW', price: '₱2,099.00', duration: '3 hrs', img: '{{ asset('images/eyebrows3.png') }}', desc: 'HYBRID OF BLADING AND SHADING FOR MAXIMUM DIMENSION.', sessions: ['2 SESSIONS: ₱3,999.00'] },
         { category: 'EYEBROWS', name: 'BROWS LAMINATION', price: '₱349.00', duration: '1 hr', img: '{{ asset('images/eyebrows4.png') }}', desc: 'REALIGNS HAIR FOR FULLER, FLUFFIER GROOMED BROWS.', sessions: null },
         { category: 'EYEBROWS', name: 'EYEBROW THREADING', price: '₱50.00', duration: '15 mins', img: '{{ asset('images/eyebrows5.png') }}', desc: 'PRECISE HAIR REMOVAL FOR A SHARP BROW ARCH.', sessions: null },
 
-        // MESO LIPOSUCTION (WITH SESSIONS)
         { category: 'MESO LIPOSUCTION', name: 'MESO LIPO FACE (FREE RF)', price: '₱429.00', duration: '45 mins', img: '{{ asset('images/meso1.png') }}', desc: 'NON-SURGICAL FAT-MELTING INJECTION FOR JAWLINE.', sessions: ['5 SESSIONS: ₱1,930.00', '12 SESSIONS: ₱4,536.00'] },
         { category: 'MESO LIPOSUCTION', name: 'MESO LIPO ARMS (FREE RF)', price: '₱629.00', duration: '1 hr', img: '{{ asset('images/meso2.png') }}', desc: 'TARGETS STUBBORN ARM FAT AND ELIMINATES FLAB.', sessions: ['5 SESSIONS: ₱2,830.00', '12 SESSIONS: ₱6,042.00'] },
         { category: 'MESO LIPOSUCTION', name: 'MESO LIPO TUMMY (FREE RF)', price: '₱729.00', duration: '1 hr', img: '{{ asset('images/meso3.png') }}', desc: 'DISSOLVES ABDOMINAL FAT FOR A FLATTER SILHOUETTE.', sessions: ['5 SESSIONS: ₱3,235.00', '12 SESSIONS: ₱7,582.00'] },
         { category: 'MESO LIPOSUCTION', name: 'MESO LIPO LEGS (FREE RF)', price: '₱729.00', duration: '1 hr', img: '{{ asset('images/meso4.png') }}', desc: 'MELT FAT IN THIGHS AND CALVES WHILE SMOOTHING TEXTURE.', sessions: ['5 SESSIONS: ₱3,235.00', '12 SESSIONS: ₱7,582.00'] },
 
-        // OTHERS
         { category: 'OTHERS', name: 'LIP BLUSH', price: '₱1,299.00', duration: '2 hrs', img: '{{ asset('images/lips.png') }}', desc: 'SEMI-PERMANENT TINT ENHANCEMENT.', sessions: ['2 SESSIONS: ₱2,399.00'] },
         { category: 'OTHERS', name: 'WARTS REMOVAL', price: '₱199.00', duration: '30-60 mins', img: '{{ asset('images/wartspng.png') }}', desc: 'QUICK AND SAFE ELIMINATION.', sessions: ['2 SESSIONS: ₱349.00'] },
 
-        // NAILS & SPA
         { category: 'NAILS & SPA', name: 'PEDICURE/MANICURE', price: '₱100.00', duration: '1 hr', img: '{{ asset('images/manicure1.png') }}', desc: 'GROOMING THE NAILS AND THE SKIN IMMEDIATELY SURROUNDING THEM.', sessions: null },
         { category: 'NAILS & SPA', name: 'FOOT SPA', price: '₱300.00', duration: '1.5 hrs', img: '{{ asset('images/footspa.png') }}', desc: 'INTENSIVE TREATMENT FOR THE ENTIRE FOOT UP TO THE ANKLE OR CALF.', sessions: null }
     ],
@@ -101,6 +98,7 @@
         this.selectedService = name;
         this.selectedPrice = price;
         this.selectedDuration = duration;
+        this.bookingData.service_type = name;
         this.step = 2;
     }
 }">
@@ -115,18 +113,14 @@
                                 <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
-
                         <div class="flex items-center space-x-2">
                             <span class="text-red-600 text-2xl font-bold">✂</span>
                             <span class="text-lg font-bold tracking-tight uppercase mobile-title">Tonet Salon Management System</span>
                         </div>
                         <div class="hidden md:flex space-x-2 ml-10 text-xs font-bold uppercase tracking-widest">
                             <a href="#" @click.prevent="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded flex items-center transition">Dashboard</a>
-                            
                             <a href="#" @click.prevent="showModal = true; step = 1" class="hover:text-red-500 px-3 py-2 transition flex items-center">Book Appointment</a>
-                            
                             <a href="#" @click.prevent="currentTab = 'myappointments'" :class="currentTab === 'myappointments' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded transition flex items-center">My Appointments</a>
-                            
                             <a href="#" @click.prevent="currentTab = 'invoices'" :class="currentTab === 'invoices' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded transition flex items-center">Invoices</a>
                         </div>
                     </div>
@@ -138,7 +132,7 @@
                                 <svg class="ms-1 fill-current h-4 w-4 text-red-600" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                             </button>
                             <div x-show="dropdownOpen" x-cloak class="absolute right-0 z-50 mt-2 w-48 rounded shadow-xl bg-card-dark border border-red-900 py-1 text-gray-300">
-                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm hover:bg-red-900 hover:text-white">Profile Settings</a>
+                                <a href="{{ route('client.profile') }}" class="block px-4 py-2 text-sm hover:bg-red-900 hover:text-white">Profile Settings</a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-900 hover:text-white font-bold" onclick="event.preventDefault(); this.closest('form').submit();">Log Out</button>
@@ -148,7 +142,6 @@
                     </div>
                 </div>
             </div>
-
             <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-black border-t border-red-900 px-4 py-2 space-y-1">
                 <a href="#" @click.prevent="currentTab = 'dashboard'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Dashboard</a>
                 <a href="#" @click.prevent="showModal = true; step = 1; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Book Appointment</a>
@@ -156,8 +149,8 @@
                 <a href="#" @click.prevent="currentTab = 'invoices'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Invoices</a>
             </div>
         </nav>
+
         <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            
             <div x-show="currentTab === 'dashboard'">
                 <div class="mb-8">
                     <h1 class="text-3xl font-black text-white uppercase italic">Welcome back, {{ Auth::user()->name }}!</h1>
@@ -209,7 +202,7 @@
                                     <a href="#" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center"><span class="mr-2 text-red-600">📋</span> View All Appointments</a>
                                     <a href="#" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center"><span class="mr-2 text-red-600">📄</span> View Invoices</a>
                                     <a href="#" @click.prevent="currentTab = 'services'" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center"><span class="mr-2 text-red-600">🌿</span> Browse Services</a>
-                                    <a href="{{ route('profile.edit') }}" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center"><span class="mr-2 text-red-600">👤</span> Update Profile</a>
+                                    <a href="{{ route('client.profile') }}" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center"><span class="mr-2 text-red-600">👤</span> Update Profile</a>
                                 </div>
                             </div>
                         </div>
@@ -224,10 +217,6 @@
             <div x-show="currentTab === 'invoices'" x-cloak>
                 @include('client.invoices')
             </div>
-
-            
-
-           
         </main>
     </div>
 
@@ -239,7 +228,6 @@
          style="display: none;">
         
         <div class="bg-card-dark w-full max-w-6xl rounded border border-red-900 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
-            
             <div class="bg-black border-b border-red-900 p-5 flex justify-between items-center shadow-xl">
                 <div class="flex items-center space-x-3">
                     <span class="text-red-600 text-2xl font-bold">✂</span>
@@ -251,7 +239,6 @@
             </div>
 
             <div class="p-8 overflow-y-auto custom-scroll bg-dark-home">
-                
                 <div x-show="step === 1" x-transition>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         <template x-for="(service, index) in services" :key="index">
@@ -267,28 +254,21 @@
                                         <img :src="service.img" class="w-full h-40 object-cover rounded mb-4 opacity-70 group-hover:opacity-100 transition border border-red-900">
                                         <span class="absolute top-2 right-2 bg-black bg-opacity-80 text-white text-[9px] font-black px-2 py-1 rounded border border-red-900 uppercase tracking-widest" x-text="'🕒 ' + service.duration"></span>
                                     </div>
-                                    
                                     <div class="flex-1">
                                         <h4 class="font-black text-white text-sm uppercase mb-1 tracking-tight" x-text="service.name"></h4>
                                         <p class="text-gray-500 text-[10px] uppercase mb-4 font-bold leading-tight" x-text="service.desc"></p>
                                     </div>
-
                                     <div class="flex justify-between items-end pt-3 border-t border-red-900/50">
                                         <div class="price-container cursor-help flex-1">
                                             <span class="text-[9px] text-gray-500 uppercase block font-bold">Starts At:</span>
                                             <span class="text-red-600 font-black text-lg leading-none" x-text="service.price"></span>
-                                            
                                             <div class="session-info mt-1" x-show="service.sessions">
                                                 <template x-for="session in service.sessions">
                                                     <p class="text-white text-[9px] font-bold uppercase tracking-tight" x-text="session"></p>
                                                 </template>
                                             </div>
                                         </div>
-
-                                        <button @click="selectService(service.name, service.price, service.duration)" 
-                                                class="bg-red-600 text-white text-[10px] font-black px-4 py-2 uppercase tracking-widest hover:bg-white hover:text-black transition-colors shadow-lg">
-                                            Book Now
-                                        </button>
+                                        <button @click="selectService(service.name, service.price, service.duration)" class="bg-red-600 text-white text-[10px] font-black px-4 py-2 uppercase tracking-widest hover:bg-white hover:text-black transition-colors shadow-lg">Book Now</button>
                                     </div>
                                 </div>
                             </div>
@@ -310,55 +290,50 @@
                                 <p class="text-gray-400 font-bold text-xs uppercase tracking-widest" x-text="'Duration: ' + selectedDuration"></p>
                             </div>
                         </div>
-<form class="space-y-5" method="POST" action="{{ route('appointment.store') }}">
-    @csrf
-    
-    <input type="hidden" name="service_type" x-model="bookingData.service_type">
 
-    <div>
-        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Select Date</label>
-        <input type="date" name="appointment_date" x-model="bookingData.date" required
-            class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
-    </div>
+                        <form class="space-y-5" method="POST" action="{{ route('appointment.store') }}">
+                            @csrf
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Select Date</label>
+                                <input type="date" name="appointment_date" x-model="bookingData.date" required
+                                    class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
+                            </div>
 
-    <div>
-        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Select Time</label>
-        <select name="appointment_time" x-model="bookingData.time" required
-            class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
-            <option value="09:00:00">09:00 AM</option>
-            <option value="10:30:00">10:30 AM</option>
-            <option value="13:00:00">01:00 PM</option>
-            <option value="15:30:00">03:30 PM</option>
-            <option value="17:00:00">05:00 PM</option>
-        </select>
-    </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Select Time</label>
+                                <select name="appointment_time" x-model="bookingData.time" required
+                                    class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
+                                    <option value="09:00:00">09:00 AM</option>
+                                    <option value="10:30:00">10:30 AM</option>
+                                    <option value="13:00:00">01:00 PM</option>
+                                    <option value="15:30:00">03:30 PM</option>
+                                    <option value="17:00:00">05:00 PM</option>
+                                </select>
+                            </div>
 
-    
-    <div>
-        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Services</label>
-        <input type="text" name="service_type" x-model="bookingData.service_type" placeholder="e.g., Haircut, Coloring" required
-            class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
-    </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Services</label>
+                                <input type="text" name="service_type" x-model="bookingData.service_type" readonly required
+                                    class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:outline-none cursor-not-allowed border-opacity-50">
+                            </div>
 
-    <div>
-        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Phone Number</label>
-        <input type="text" name="phone" x-model="bookingData.phone" placeholder="0912 345 6789" required
-            class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
-    </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Phone Number</label>
+                                <input type="text" name="phone" x-model="bookingData.phone" placeholder="0912 345 6789" required
+                                    class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
+                            </div>
 
-    <div>
-        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Special Requests</label>
-        <textarea name="message" x-model="bookingData.message" rows="2" 
-            class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none"
-            placeholder="Any specific requests?"></textarea>
-    </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Special Requests</label>
+                                <textarea name="message" x-model="bookingData.message" rows="2" 
+                                    class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none"
+                                    placeholder="Any specific requests?"></textarea>
+                            </div>
 
-    <button type="submit" 
-        class="w-full bg-red-600 text-white py-4 rounded font-black uppercase tracking-widest shadow-lg hover:bg-white hover:text-black transition-all transform hover:scale-[1.02]">
-        Confirm Appointment
-    </button>
-</form>
-
+                            <button type="submit" class="w-full bg-red-600 text-white py-4 rounded font-black uppercase tracking-widest shadow-lg hover:bg-white hover:text-black transition-all transform hover:scale-[1.02]">
+                                Confirm Appointment
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

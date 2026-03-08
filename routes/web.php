@@ -71,5 +71,17 @@ Route::post('/book-appointment', [AppointmentController::class, 'store'])->name(
         Route::delete('/profile', 'destroy')->name('profile.destroy');
     });
 
+    Route::middleware(['auth'])->group(function () {
+    // Show the profile page
+    Route::get('/profile', function () {
+        return view('client.profile', [
+            'user' => auth()->user()
+        ]);
+    })->name('client.profile');
+
+    // Handle the update logic
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
+
 
 require __DIR__.'/auth.php';

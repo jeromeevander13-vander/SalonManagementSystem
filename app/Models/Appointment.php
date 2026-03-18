@@ -7,13 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 class Appointment extends Model
 {
     // This tells Laravel it is okay to insert data into these specific columns
-   protected $fillable = [
+  protected $fillable = [
     'customer_name', 
     'email', 
     'phone', 
-    'service_type', 
+    'service_id',
+    'price', // Added this
     'appointment_time', 
     'status', 
     'message'
 ];
+
+
+  public function service()
+  {
+    return $this->belongsTo(Service::class);
+  }
+
 }

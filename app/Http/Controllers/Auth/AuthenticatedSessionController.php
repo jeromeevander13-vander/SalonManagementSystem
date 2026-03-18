@@ -27,9 +27,14 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
+
+        if (!Auth::user()->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+
         if (Auth::user()->can('acces-admin')) {
             return redirect()->route('admin_main');
-        }else{
+        } else {
             return redirect()->route('client_main');
         }
        

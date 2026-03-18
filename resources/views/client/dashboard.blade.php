@@ -12,6 +12,23 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @php
+    $servicesArray = $services->map(function($service) {
+        return [
+            'id' => $service->id,
+            'category' => 'SERVICES',
+            'name' => $service->name,
+            'price' => $service->price,
+            'duration' => $service->duration ? $service->duration . ' mins' : 'N/A',
+            'img' => $service->image ? asset($service->image) : asset('images/service.jpg'),
+            'desc' => $service->description ?? 'Professional service',
+            'sessions' => null
+        ];
+    })->toArray();
+    @endphp
+    <script>
+        window.servicesData = @json($servicesArray);
+    </script>
 
     <style>
         [x-cloak] { display: none !important; }
@@ -37,71 +54,55 @@
         @media (max-width: 640px) {
             .mobile-title { font-size: 0.75rem !important; line-height: 1.2; }
         }
+
+        .status-badge { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; }
+        .status-pending { background-color: #eab308; color: #000; }
+        .status-completed { background-color: #06b6d4; color: #000; }
+        .status-accepted { background-color: #16a34a; color: #fff; }
+        .status-cancelled { background-color: #ef4444; color: #fff; }
+
+        .white-icon { filter: brightness(0) invert(1); }
     </style>
 </head>
-<body class="font-sans antialiased bg-dark-home text-gray-200" x-data="{ 
+<body class="font-sans antialiased bg-dark-home text-gray-200" x-data="{
     currentTab: 'dashboard',
     mobileMenuOpen: false,
     appointments: [],
-    showModal: false,
-    step: 1,
+    showModal: {{ $errors->any() ? 'true' : 'false' }},
+    showDetailsModal: false,
+    selectedAppointment: null,
+    step: {{ $errors->any() ? 2 : 1 }},
     selectedService: '',
     selectedPrice: '',
     selectedDuration: '',
-    
     bookingData: {
-        service_type: '',
-        date: '',
-        time: '09:00:00',
-        phone: '',
-        message: ''
+        service_id: {{ json_encode(old('service_id', '')) }},
+        date: {{ json_encode(old('appointment_date', '')) }},
+        time: {{ json_encode(old('appointment_time', '09:00:00')) }},
+        phone: {{ json_encode(old('phone', '')) }},
+        message: {{ json_encode(old('message', '')) }},
+        price: {{ json_encode(old('price', '')) }}
     },
-    
-    services: [
-        { category: 'HAIR COLOR & REBOND', name: 'REBOND BRAZILLIAN BOTOX', price: '₱2,000.00', duration: '3-4 hrs', img: '{{ asset('images/rebond1.jpg') }}', desc: 'ALL-IN-ONE TREATMENT PERMANENTLY STRAIGHTENS AND REPAIRS.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'REBOND BOTOX COLOR', price: '₱2,500.00', duration: '4-5 hrs', img: '{{ asset('images/rebond2.jpg') }}', desc: 'STRAIGHTENS, REPAIRS, AND ADDS VIBRANT COLOR.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'COLOR (SHORT)', price: '₱500.00', duration: '1.5 hrs', img: '{{ asset('images/rebond3.jpg') }}', desc: 'PROFESSIONAL COLORING FOR SHORTER LENGTHS.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'COLOR (LONG)', price: '₱800.00', duration: '2 hrs', img: '{{ asset('images/rebond4.jpg') }}', desc: 'EVEN COVERAGE AND VIBRANT SHADE FOR LONG HAIR.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'COLOR BOTOX (SHORT)', price: '₱1,100.00', duration: '2 hrs', img: '{{ asset('images/rebond5.jpg') }}', desc: 'RAPID CUTICLE REPAIR AND TONE REFRESHMENT.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'COLOR BOTOX (LONG)', price: '₱1,600.00', duration: '2.5 hrs', img: '{{ asset('images/rebond6.jpg') }}', desc: 'INTENSIVE RESTORATION FOR HAIR BELOW SHOULDERS.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'HIGHLIGHTS (SHORT)', price: '₱500.00', duration: '2 hrs', img: '{{ asset('images/rebond7.png') }}', desc: 'ADDS SUN-KISSED DIMENSION AND SILKY SHINE.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'HIGHLIGHTS (LONG)', price: '₱800.00', duration: '3 hrs', img: '{{ asset('images/rebond8.png') }}', desc: 'MULTI-DIMENSIONAL COLOR WITH DEEP-REPAIR.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'HIGHLIGHTS COLOR BOTOX', price: '₱2,000.00', duration: '3.5 hrs', img: '{{ asset('images/rebond9.png') }}', desc: 'NEUTRALIZES BRASSINESS AND ADDS HIGH-GLOSS SHINE.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'BALAYAGE BOTOX', price: '₱3,000.00', duration: '4 hrs', img: '{{ asset('images/rebond10.png') }}', desc: 'ENHANCES HAND-PAINTED GRADIENTS WITH HYDRATION.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'BALAYAGE REBOND BOTOX', price: '₱4,500.00', duration: '5-6 hrs', img: '{{ asset('images/rebond11.png') }}', desc: 'STRAIGHTENS WHILE REPAIRING HAND-PAINTED TONES.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'CELLOPHANE TREATMENT', price: '₱500.00', duration: '1 hr', img: '{{ asset('images/rebond12.png') }}', desc: 'CHEMICAL-FREE SEMI-PERMANENT GLOSS AND SHINE.', sessions: null },
-        { category: 'HAIR COLOR & REBOND', name: 'BRAZILLIAN BOTOX TREATMENT', price: '₱800.00', duration: '1.5 hrs', img: '{{ asset('images/rebond13.png') }}', desc: 'ELIMINATES FRIZZ AND REPAIRS HAIR FIBERS.', sessions: null },
-
-        { category: 'RF SLIMMING & CONTOUR', name: 'RF FACE', price: '₱229.00', duration: '30 mins', img: '{{ asset('images/rf1.png') }}', desc: 'NON-INVASIVE SKIN TIGHTENING AND FACIAL CONTOURING.', sessions: ['5 SESSIONS: ₱1,030.00', '12 SESSIONS: ₱2,418.00'] },
-        { category: 'RF SLIMMING & CONTOUR', name: 'RF ARMS W/ CAVITATION', price: '₱429.00', duration: '45 mins', img: '{{ asset('images/rf2.png') }}', desc: 'FIRM LOOSE SKIN AND SCULPT UPPER ARMS.', sessions: ['5 SESSIONS: ₱1,930.00', '12 SESSIONS: ₱4,350.00'] },
-        { category: 'RF SLIMMING & CONTOUR', name: 'RF TUMMY W/ CAVITATION', price: '₱519.00', duration: '45 mins', img: '{{ asset('images/rf3.png') }}', desc: 'FIRMS ABDOMINAL AREA FOR A TIGHTER WAISTLINE.', sessions: ['5 SESSIONS: ₱2,335.00', '12 SESSIONS: ₱5,480.00'] },
-        { category: 'RF SLIMMING & CONTOUR', name: 'RF LEGS W/ CAVITATION', price: '₱519.00', duration: '45 mins', img: '{{ asset('images/rf4.png') }}', desc: 'REDUCE CELLULITE AND CONTOUR THE LEGS.', sessions: ['5 SESSIONS: ₱2,335.00', '12 SESSIONS: ₱5,480.00'] },
-
-        { category: 'EYEBROWS', name: 'MICRO SHADING', price: '₱1,299.00', duration: '2 hrs', img: '{{ asset('images/eyebrows1.png') }}', desc: 'SOFT, POWDERED MAKEUP LOOK FOR SPARSE BROWS.', sessions: ['2 SESSIONS: ₱2,399.00'] },
-        { category: 'EYEBROWS', name: 'MICRO BLADING/OMBRE', price: '₱1,299.00', duration: '2.5 hrs', img: '{{ asset('images/eyebrows2.png') }}', desc: 'FINE STROKES FOR NATURAL-LOOKING HAIR GRADIENTS.', sessions: ['2 SESSIONS: ₱2,399.00'] },
-        { category: 'EYEBROWS', name: 'COMBO BROW', price: '₱2,099.00', duration: '3 hrs', img: '{{ asset('images/eyebrows3.png') }}', desc: 'HYBRID OF BLADING AND SHADING FOR MAXIMUM DIMENSION.', sessions: ['2 SESSIONS: ₱3,999.00'] },
-        { category: 'EYEBROWS', name: 'BROWS LAMINATION', price: '₱349.00', duration: '1 hr', img: '{{ asset('images/eyebrows4.png') }}', desc: 'REALIGNS HAIR FOR FULLER, FLUFFIER GROOMED BROWS.', sessions: null },
-        { category: 'EYEBROWS', name: 'EYEBROW THREADING', price: '₱50.00', duration: '15 mins', img: '{{ asset('images/eyebrows5.png') }}', desc: 'PRECISE HAIR REMOVAL FOR A SHARP BROW ARCH.', sessions: null },
-
-        { category: 'MESO LIPOSUCTION', name: 'MESO LIPO FACE (FREE RF)', price: '₱429.00', duration: '45 mins', img: '{{ asset('images/meso1.png') }}', desc: 'NON-SURGICAL FAT-MELTING INJECTION FOR JAWLINE.', sessions: ['5 SESSIONS: ₱1,930.00', '12 SESSIONS: ₱4,536.00'] },
-        { category: 'MESO LIPOSUCTION', name: 'MESO LIPO ARMS (FREE RF)', price: '₱629.00', duration: '1 hr', img: '{{ asset('images/meso2.png') }}', desc: 'TARGETS STUBBORN ARM FAT AND ELIMINATES FLAB.', sessions: ['5 SESSIONS: ₱2,830.00', '12 SESSIONS: ₱6,042.00'] },
-        { category: 'MESO LIPOSUCTION', name: 'MESO LIPO TUMMY (FREE RF)', price: '₱729.00', duration: '1 hr', img: '{{ asset('images/meso3.png') }}', desc: 'DISSOLVES ABDOMINAL FAT FOR A FLATTER SILHOUETTE.', sessions: ['5 SESSIONS: ₱3,235.00', '12 SESSIONS: ₱7,582.00'] },
-        { category: 'MESO LIPOSUCTION', name: 'MESO LIPO LEGS (FREE RF)', price: '₱729.00', duration: '1 hr', img: '{{ asset('images/meso4.png') }}', desc: 'MELT FAT IN THIGHS AND CALVES WHILE SMOOTHING TEXTURE.', sessions: ['5 SESSIONS: ₱3,235.00', '12 SESSIONS: ₱7,582.00'] },
-
-        { category: 'OTHERS', name: 'LIP BLUSH', price: '₱1,299.00', duration: '2 hrs', img: '{{ asset('images/lips.png') }}', desc: 'SEMI-PERMANENT TINT ENHANCEMENT.', sessions: ['2 SESSIONS: ₱2,399.00'] },
-        { category: 'OTHERS', name: 'WARTS REMOVAL', price: '₱199.00', duration: '30-60 mins', img: '{{ asset('images/wartspng.png') }}', desc: 'QUICK AND SAFE ELIMINATION.', sessions: ['2 SESSIONS: ₱349.00'] },
-
-        { category: 'NAILS & SPA', name: 'PEDICURE/MANICURE', price: '₱100.00', duration: '1 hr', img: '{{ asset('images/manicure1.png') }}', desc: 'GROOMING THE NAILS AND THE SKIN IMMEDIATELY SURROUNDING THEM.', sessions: null },
-        { category: 'NAILS & SPA', name: 'FOOT SPA', price: '₱300.00', duration: '1.5 hrs', img: '{{ asset('images/footspa.png') }}', desc: 'INTENSIVE TREATMENT FOR THE ENTIRE FOOT UP TO THE ANKLE OR CALF.', sessions: null }
-    ],
-    selectService(name, price, duration) {
+    services: window.servicesData || [],
+    selectService(id, name, price, duration) {
         this.selectedService = name;
         this.selectedPrice = price;
         this.selectedDuration = duration;
-        this.bookingData.service_type = name;
+        this.bookingData.service_id = id;
+        this.bookingData.price = price;
         this.step = 2;
     }
-}">
+}" x-init="
+    console.log('Alpine.js loaded', services);
+    if (bookingData.service_id) {
+        const svc = services.find(s => s.id == bookingData.service_id);
+        if (svc) {
+            selectedService = svc.name;
+            selectedPrice = svc.price;
+            selectedDuration = svc.duration;
+        }
+    }
+">
     <div class="min-h-screen">
         <nav class="bg-black border-b border-red-900 text-white shadow-lg">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -113,23 +114,23 @@
                                 <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-red-600 text-2xl font-bold">✂</span>
-                            <span class="text-lg font-bold tracking-tight uppercase mobile-title">Tonet Salon Management System</span>
+                        <div class="flex items-center gap-3">
+                            <img src="{{ asset('images/woman-with-long-hair.png') }}" class="w-8 h-8 white-icon">
+                            <span class="text-lg font-black tracking-tighter uppercase italic mobile-title">Tonet Salon</span>
                         </div>
                         <div class="hidden md:flex space-x-2 ml-10 text-xs font-bold uppercase tracking-widest">
                             <a href="#" @click.prevent="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded flex items-center transition">Dashboard</a>
-                            <a href="#" @click.prevent="showModal = true; step = 1" class="hover:text-red-500 px-3 py-2 transition flex items-center">Book Appointment</a>
                             <a href="#" @click.prevent="currentTab = 'myappointments'" :class="currentTab === 'myappointments' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded transition flex items-center">My Appointments</a>
-                            <a href="#" @click.prevent="currentTab = 'invoices'" :class="currentTab === 'invoices' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded transition flex items-center">Invoices</a>
                         </div>
                     </div>
                     <div class="flex items-center">
                         <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
-                            <button @click="dropdownOpen = !dropdownOpen" class="flex items-center text-xs font-bold uppercase hover:text-red-500 transition">
-                                <span class="hidden sm:inline">👤 {{ Auth::user()->name }}</span>
-                                <span class="sm:hidden text-lg">👤</span>
-                                <svg class="ms-1 fill-current h-4 w-4 text-red-600" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
+                            <button @click="dropdownOpen = !dropdownOpen" class="flex items-center focus:outline-none group">
+                                <span class="hidden sm:inline text-[10px] font-black uppercase mr-2 text-gray-500 italic group-hover:text-red-500 transition tracking-widest">{{ Auth::user()->name }}</span>
+                                <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-black text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-110">
+                                    {{ substr(Auth::user()->name, 0, 1) }}
+                                </div>
+                                <svg class="ms-1 fill-current h-4 w-4 text-red-600 transition-transform group-hover:translate-y-0.5" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                             </button>
                             <div x-show="dropdownOpen" x-cloak class="absolute right-0 z-50 mt-2 w-48 rounded shadow-xl bg-card-dark border border-red-900 py-1 text-gray-300">
                                 <a href="{{ route('client.profile') }}" class="block px-4 py-2 text-sm hover:bg-red-900 hover:text-white">Profile Settings</a>
@@ -144,65 +145,165 @@
             </div>
             <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-black border-t border-red-900 px-4 py-2 space-y-1">
                 <a href="#" @click.prevent="currentTab = 'dashboard'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Dashboard</a>
-                <a href="#" @click.prevent="showModal = true; step = 1; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Book Appointment</a>
                 <a href="#" @click.prevent="currentTab = 'myappointments'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">My Appointments</a>
-                <a href="#" @click.prevent="currentTab = 'invoices'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Invoices</a>
             </div>
         </nav>
 
         <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <div x-show="currentTab === 'dashboard'">
+            <div x-show="currentTab === 'dashboard'" x-cloak>
                 <div class="mb-8">
                     <h1 class="text-3xl font-black text-white uppercase italic">Welcome back, {{ Auth::user()->name }}!</h1>
                     <p class="text-red-500 font-medium tracking-wide">Manage your appointments and beauty treatments.</p>
                 </div>
 
+                @if(session('success'))
+                <div class="mb-6 p-4 bg-green-900/20 border border-green-900 rounded text-green-500 text-xs font-bold uppercase tracking-widest flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    {{ session('success') }}
+                </div>
+                @endif
+
+                @if(session('error'))
+                <div class="mb-6 p-4 bg-red-900/20 border border-red-900 rounded text-red-500 text-xs font-bold uppercase tracking-widest flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    {{ session('error') }}
+                </div>
+                @endif
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-card-dark p-6 rounded border border-red-900 flex justify-between items-center shadow-2xl">
-                        <div><p class="text-5xl font-black text-white" x-text="appointments.length">0</p><p class="text-gray-400 text-xs font-bold uppercase mt-1">Total Appointments</p></div>
-                        <div class="text-red-600 text-3xl">📅</div>
+                    <div class="bg-card-dark p-6 rounded border border-red-900 flex justify-between items-center shadow-2xl group hover:border-red-600 transition-colors">
+                        <div><p class="text-5xl font-black text-white">{{ $totalAppointments }}</p><p class="text-gray-400 text-xs font-bold uppercase mt-1">Total Appointments</p></div>
+                        <div class="text-red-600">
+                             <svg class="w-10 h-10 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
                     </div>
-                    <div class="bg-card-dark p-6 rounded border border-red-900 flex justify-between items-center shadow-2xl">
-                        <div><p class="text-5xl font-black text-white">0</p><p class="text-gray-400 text-xs font-bold uppercase mt-1">Upcoming Appointments</p></div>
-                        <div class="text-yellow-500 text-3xl">🕒</div>
+                    <div class="bg-card-dark p-6 rounded border border-red-900 flex justify-between items-center shadow-2xl group hover:border-yellow-600 transition-colors">
+                        <div><p class="text-5xl font-black text-white">{{ $upcomingAppointmentsCount }}</p><p class="text-gray-400 text-xs font-bold uppercase mt-1">Upcoming Visits</p></div>
+                        <div class="text-yellow-500">
+                            <svg class="w-10 h-10 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
                     </div>
-                    <div class="bg-card-dark p-6 rounded border border-red-900 flex justify-between items-center shadow-2xl">
-                        <div><p class="text-5xl font-black text-white">₱0.00</p><p class="text-gray-400 text-xs font-bold uppercase mt-1">Total Spent</p></div>
-                        <div class="text-blue-500 text-3xl">💰</div>
+                    <div class="bg-card-dark p-6 rounded border border-red-900 flex justify-between items-center shadow-2xl group hover:border-green-600 transition-colors">
+                        <div><p class="text-5xl font-black text-white">₱{{ number_format($totalSpent, 2) }}</p><p class="text-gray-400 text-xs font-bold uppercase mt-1">Total Spent</p></div>
+                        <div class="text-green-600">
+                            <svg class="w-10 h-10 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="lg:col-span-2 space-y-8">
+                        @if($nextVisit)
+                        <div class="bg-card-dark p-8 rounded border border-yellow-900 shadow-2xl border-l-4 border-l-yellow-600 relative overflow-hidden group">
+                             <!-- Decorative Background SVG -->
+                             <svg class="absolute -right-4 -bottom-4 w-32 h-32 text-yellow-600 opacity-5 group-hover:opacity-10 transition-opacity" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+
+                             <div class="flex items-center justify-between">
+                                 <div>
+                                     <div class="flex items-center space-x-2 mb-2">
+                                         <span class="bg-yellow-600 text-black text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest animate-pulse">Next Up</span>
+                                         <p class="text-gray-500 text-[9px] font-bold uppercase tracking-widest">ID: #{{ $nextVisit->id }}</p>
+                                     </div>
+                                     <h3 class="text-2xl font-black text-white uppercase italic tracking-tighter">{{ $nextVisit->service ? $nextVisit->service->name : ($nextVisit->service_type ?? 'N/A') }}</h3>
+                                     <div class="flex items-center space-x-4 mt-2">
+                                         <div class="flex items-center text-yellow-500">
+                                              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                              <span class="text-[10px] font-black uppercase tracking-widest">{{ \Carbon\Carbon::parse($nextVisit->appointment_time)->format('M d, Y') }}</span>
+                                         </div>
+                                         <div class="flex items-center text-yellow-500">
+                                              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                              <span class="text-[10px] font-black uppercase tracking-widest">{{ \Carbon\Carbon::parse($nextVisit->appointment_time)->format('h:i A') }}</span>
+                                         </div>
+                                     </div>
+                                 </div>
+                                 <div class="text-right flex flex-col items-end">
+                                     <div class="status-badge status-{{ strtolower($nextVisit->status) }} mb-4 scale-110">{{ $nextVisit->status }}</div>
+                                     <div class="flex items-center space-x-2">
+                                         <button @click="currentTab = 'myappointments'" class="bg-white text-black text-[10px] font-black px-6 py-2 uppercase rounded hover:bg-yellow-600 transition shadow-xl">Details</button>
+                                         <form action="{{ route('client.appointment.cancel', $nextVisit) }}" method="POST" onsubmit="return confirm('Magic sessions are precious. Are you sure you want to cancel?')">
+                                             @csrf
+                                             <button type="submit" class="bg-red-900 text-white text-[10px] font-black px-6 py-2 uppercase rounded hover:bg-white hover:text-red-900 transition shadow-xl">Cancel</button>
+                                         </form>
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                        @else
                         <div class="bg-card-dark p-12 rounded border border-red-900 flex flex-col items-center justify-center text-center shadow-2xl">
                             <div class="w-20 h-20 rounded-full mb-6 flex items-center justify-center text-red-600 text-4xl font-bold border-2 border-dashed border-red-900 bg-red-950 bg-opacity-20">+</div>
-                            <h3 class="text-2xl font-black text-white uppercase italic">No Upcoming Appointments</h3>
+                            <h3 class="text-2xl font-black text-white uppercase italic">No Upcoming Visits</h3>
                             <p class="text-gray-400 mb-8 max-w-xs">Book your next magic treatment today!</p>
                             <button @click="showModal = true; step = 1" class="bg-red-600 text-white px-8 py-3 rounded font-black uppercase tracking-tighter hover:bg-red-700 transition shadow-lg transform hover:scale-105">Book Appointment</button>
                         </div>
+                        @endif
 
                         <div class="bg-card-dark rounded border border-red-900 overflow-hidden shadow-2xl">
                             <div class="px-6 py-4 border-b border-red-900 flex justify-between items-center bg-black bg-opacity-40">
-                                <h3 class="font-bold text-white uppercase text-sm tracking-widest flex items-center"><span class="mr-2 text-red-600">🕒</span> Recent Appointments</h3>
-                                <a href="#" class="text-red-500 text-xs uppercase hover:underline font-bold">View All</a>
+                                <h3 class="font-bold text-white uppercase text-sm tracking-widest flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Recent Activity
+                                </h3>
+                                <a href="#" @click.prevent="currentTab = 'myappointments'" class="text-red-500 text-xs uppercase hover:underline font-bold">View History</a>
                             </div>
-                            <div class="p-16 text-center text-gray-500">
-                                <p class="uppercase text-xs tracking-widest">No appointments found.</p>
-                                <button @click="showModal = true; step = 1" class="mt-4 text-red-500 font-bold border border-red-900 px-4 py-1 rounded hover:bg-red-900 hover:text-white transition">Book Your First</button>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    @if($recentAppointments->count() > 0)
+                                    <tbody class="divide-y divide-red-900/20">
+                                        @foreach($recentAppointments as $app)
+                                        <tr class="hover:bg-red-900/5 transition-colors">
+                                            <td class="px-6 py-4">
+                                                <p class="text-white font-bold uppercase text-[10px] italic">{{ $app->service ? $app->service->name : ($app->service_type ?? 'N/A') }}</p>
+                                                <p class="text-[9px] text-gray-500 font-bold uppercase">{{ \Carbon\Carbon::parse($app->appointment_time)->format('M d, Y - h:i A') }}</p>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="status-badge status-{{ strtolower($app->status) }}">
+                                                    {{ $app->status }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 text-right text-white font-black italic text-[10px]">
+                                                {{ $app->service ? $app->service->price : '---' }}
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                    @else
+                                    <div class="p-16 text-center text-gray-500">
+                                        <p class="uppercase text-xs tracking-widest">No activity yet.</p>
+                                        <button @click="showModal = true; step = 1" class="mt-4 text-red-500 font-bold border border-red-900 px-4 py-1 rounded hover:bg-red-900 hover:text-white transition">Book Your First</button>
+                                    </div>
+                                    @endif
+                                </table>
                             </div>
                         </div>
                     </div>
 
                     <div class="space-y-6">
                         <div class="bg-card-dark rounded border border-red-900 p-6 shadow-2xl">
-                            <h3 class="font-bold text-white uppercase text-sm tracking-widest mb-6 flex items-center"><span class="mr-2 text-red-600">⚡</span> Quick Actions</h3>
+                            <h3 class="font-bold text-white uppercase text-sm tracking-widest mb-6 flex items-center">
+                                <svg class="w-4 h-4 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                Quick Actions
+                            </h3>
                             <div class="space-y-4">
                                 <button @click="showModal = true; step = 1" class="w-full bg-red-600 text-white py-3 rounded font-black uppercase tracking-tighter hover:bg-red-700 transition">Book New Appointment</button>
                                 <div class="flex flex-col space-y-4 pt-4">
-                                    <a href="#" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center"><span class="mr-2 text-red-600">📋</span> View All Appointments</a>
-                                    <a href="#" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center"><span class="mr-2 text-red-600">📄</span> View Invoices</a>
-                                    <a href="#" @click.prevent="currentTab = 'services'" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center"><span class="mr-2 text-red-600">🌿</span> Browse Services</a>
-                                    <a href="{{ route('client.profile') }}" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center"><span class="mr-2 text-red-600">👤</span> Update Profile</a>
+                                    <a href="#" @click.prevent="currentTab = 'myappointments'" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                                        View All Appointments
+                                    </a>
+                                    <a href="#" @click.prevent="currentTab = 'services'" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758L5 19m0-14l4.121 4.121" /></svg>
+                                        Browse Services
+                                    </a>
+                                    <a href="{{ route('client.profile') }}" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center">
+                                        <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                        Update Profile
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -211,11 +312,45 @@
             </div>
 
             <div x-show="currentTab === 'myappointments'" x-cloak>
+                <button @click="showModal = true; step = 1" class="bg-red-600 text-white px-8 py-3 rounded font-black uppercase tracking-tighter hover:bg-red-700 transition shadow-lg transform hover:scale-105 mb-6">Book Appointment</button>
                 @include('client.myappointments')
             </div>
 
-            <div x-show="currentTab === 'invoices'" x-cloak>
-                @include('client.invoices')
+            <div x-show="currentTab === 'services'" x-cloak>
+                <div class="mb-8">
+                    <h1 class="text-3xl font-black text-white uppercase italic">Our Services</h1>
+                    <p class="text-red-500 text-sm font-bold tracking-widest uppercase">Choose from our professional offerings</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <template x-for="(service, index) in services" :key="index">
+                        <div class="bg-card-dark border border-red-900 p-4 rounded group hover:border-red-600 transition-all flex flex-col shadow-lg">
+                            <div class="relative">
+                                <img :src="service.img" class="w-full h-40 object-cover rounded mb-4 opacity-70 group-hover:opacity-100 transition border border-red-900">
+                                <span class="absolute top-2 right-2 bg-black bg-opacity-80 text-white text-[9px] font-black px-2 py-1 rounded border border-red-900 uppercase tracking-widest flex items-center">
+                                    <svg class="w-3 h-3 mr-1 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <span x-text="service.duration"></span>
+                                </span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-black text-white text-sm uppercase mb-1 tracking-tight" x-text="service.name"></h4>
+                                <p class="text-gray-500 text-[10px] uppercase mb-4 font-bold leading-tight" x-text="service.desc"></p>
+                            </div>
+                            <div class="flex justify-between items-end pt-3 border-t border-red-900/50">
+                                <div class="price-container cursor-help flex-1">
+                                    <span class="text-[9px] text-gray-500 uppercase block font-bold">Starts At:</span>
+                                    <span class="text-red-600 font-black text-lg leading-none" x-text="service.price"></span>
+                                    <div class="session-info mt-1" x-show="service.sessions">
+                                        <template x-for="session in service.sessions">
+                                            <p class="text-white text-[9px] font-bold uppercase tracking-tight" x-text="session"></p>
+                                        </template>
+                                    </div>
+                                </div>
+                                <button @click="showModal = true; step = 1; selectService(service.id, service.name, service.price, service.duration)" class="bg-red-600 text-white text-[10px] font-black px-4 py-2 uppercase tracking-widest hover:bg-white hover:text-black transition-colors shadow-lg">Book Now</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
             </div>
         </main>
     </div>
@@ -230,7 +365,7 @@
         <div class="bg-card-dark w-full max-w-6xl rounded border border-red-900 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
             <div class="bg-black border-b border-red-900 p-5 flex justify-between items-center shadow-xl">
                 <div class="flex items-center space-x-3">
-                    <span class="text-red-600 text-2xl font-bold">✂</span>
+                    <img src="{{ asset('images/woman-with-long-hair.png') }}" class="w-8 h-8 white-icon">
                     <h2 class="text-white font-black uppercase italic tracking-tighter text-xl">
                         <span x-text="step === 1 ? 'Select Service' : 'Schedule Visit'"></span>
                     </h2>
@@ -252,7 +387,10 @@
                                 <div class="bg-card-dark border border-red-900 p-4 rounded group hover:border-red-600 transition-all flex flex-col shadow-lg">
                                     <div class="relative">
                                         <img :src="service.img" class="w-full h-40 object-cover rounded mb-4 opacity-70 group-hover:opacity-100 transition border border-red-900">
-                                        <span class="absolute top-2 right-2 bg-black bg-opacity-80 text-white text-[9px] font-black px-2 py-1 rounded border border-red-900 uppercase tracking-widest" x-text="'🕒 ' + service.duration"></span>
+                                        <span class="absolute top-2 right-2 bg-black bg-opacity-80 text-white text-[9px] font-black px-2 py-1 rounded border border-red-900 uppercase tracking-widest flex items-center">
+                                            <svg class="w-3 h-3 mr-1 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            <span x-text="service.duration"></span>
+                                        </span>
                                     </div>
                                     <div class="flex-1">
                                         <h4 class="font-black text-white text-sm uppercase mb-1 tracking-tight" x-text="service.name"></h4>
@@ -268,7 +406,7 @@
                                                 </template>
                                             </div>
                                         </div>
-                                        <button @click="selectService(service.name, service.price, service.duration)" class="bg-red-600 text-white text-[10px] font-black px-4 py-2 uppercase tracking-widest hover:bg-white hover:text-black transition-colors shadow-lg">Book Now</button>
+                                        <button @click="selectService(service.id, service.name, service.price, service.duration)" class="bg-red-600 text-white text-[10px] font-black px-4 py-2 uppercase tracking-widest hover:bg-white hover:text-black transition-colors shadow-lg">Book Now</button>
                                     </div>
                                 </div>
                             </div>
@@ -283,6 +421,7 @@
                     
                     <div class="bg-card-dark border border-red-900 p-8 rounded shadow-2xl space-y-6">
                         <div class="border-b border-red-900 pb-4">
+                   
                             <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Service Selected</p>
                             <h3 class="text-xl font-black text-white uppercase italic tracking-tighter" x-text="selectedService"></h3>
                             <div class="flex justify-between items-center mt-2">
@@ -297,6 +436,9 @@
                                 <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Select Date</label>
                                 <input type="date" name="appointment_date" x-model="bookingData.date" required
                                     class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
+                                @error('appointment_date')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div>
@@ -309,18 +451,32 @@
                                     <option value="15:30:00">03:30 PM</option>
                                     <option value="17:00:00">05:00 PM</option>
                                 </select>
+                                @error('appointment_time')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Services</label>
-                                <input type="text" name="service_type" x-model="bookingData.service_type" readonly required
+                                <input type="text" :value="selectedService" readonly
                                     class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:outline-none cursor-not-allowed border-opacity-50">
+                                <input type="hidden" name="service_id" x-model="bookingData.service_id">
+                                
+                                @error('service_id')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
+                                @error('price')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div>
                                 <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Phone Number</label>
-                                <input type="text" name="phone" x-model="bookingData.phone" placeholder="0912 345 6789" required
+                                <input type="number" name="phone" x-model="bookingData.phone" placeholder="0912 345 6789" required
                                     class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
+                                @error('phone')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div>
@@ -328,6 +484,9 @@
                                 <textarea name="message" x-model="bookingData.message" rows="2" 
                                     class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none"
                                     placeholder="Any specific requests?"></textarea>
+                                @error('message')
+                                    <span class="text-red-500 text-xs">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <button type="submit" class="w-full bg-red-600 text-white py-4 rounded font-black uppercase tracking-widest shadow-lg hover:bg-white hover:text-black transition-all transform hover:scale-[1.02]">
@@ -336,6 +495,76 @@
                         </form>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    <!-- Appointment Details Modal -->
+    <div x-show="showDetailsModal" 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-90" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-cloak
+         style="display: none;">
+        
+        <div class="bg-card-dark w-full max-w-lg rounded border border-red-900 shadow-2xl overflow-hidden flex flex-col relative" @click.outside="showDetailsModal = false">
+            <!-- Top Accent -->
+            <div class="h-1 w-full bg-gradient-to-r from-red-600 via-red-900 to-red-600"></div>
+
+            <div class="bg-black border-b border-red-900 p-6 flex justify-between items-center shadow-xl">
+                <div>
+                    <p class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.25em] mb-1">Appointment Details</p>
+                    <h2 class="text-white font-black uppercase italic tracking-tighter text-2xl" x-text="selectedAppointment ? (selectedAppointment.service ? selectedAppointment.service.name : 'Service') : '' "></h2>
+                </div>
+                <button @click="showDetailsModal = false" class="text-gray-500 hover:text-red-500 text-3xl font-black transition leading-none">&times;</button>
+            </div>
+
+            <div class="p-8 space-y-8 bg-dark-home">
+                <template x-if="selectedAppointment">
+                    <div class="space-y-6">
+                        <!-- Status & Price Header -->
+                        <div class="flex items-center justify-between border-b border-red-900/30 pb-6">
+                            <span :class="'status-badge status-' + selectedAppointment.status.toLowerCase()" class="py-1.5 px-4 text-xs" x-text="selectedAppointment.status"></span>
+                            <p class="text-3xl font-black text-white italic tracking-tighter" x-text="selectedAppointment.service ? '₱' + parseFloat(selectedAppointment.service.price.replace(/[^0-9.]/g, '')).toLocaleString() : '---'"></p>
+                        </div>
+
+                        <!-- Info Grid -->
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-1">
+                                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest">Date</p>
+                                <div class="flex items-center text-white">
+                                    <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    <span class="font-bold text-sm" x-text="new Date(selectedAppointment.appointment_time).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })"></span>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest">Time</p>
+                                <div class="flex items-center text-white">
+                                    <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <span class="font-bold text-sm" x-text="new Date(selectedAppointment.appointment_time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })"></span>
+                                </div>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest">Reference ID</p>
+                                <p class="text-white font-bold" x-text="'#SALON-' + selectedAppointment.id"></p>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest">Client Name</p>
+                                <p class="text-white font-bold">{{ Auth::user()->name }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Special Requests -->
+                        <div class="p-4 bg-black/40 rounded border border-red-900/30">
+                            <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Notes & Requests</p>
+                            <p class="text-gray-300 text-xs italic leading-relaxed" x-text="selectedAppointment.message || 'No special requests provided for this visit.'"></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div class="p-6 bg-black border-t border-red-900 flex justify-end">
+                <button @click="showDetailsModal = false" class="bg-red-600 text-white px-8 py-3 rounded font-black uppercase tracking-tighter hover:bg-white hover:text-black transition shadow-lg">Close Details</button>
             </div>
         </div>
     </div>

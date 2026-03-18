@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\admincontroller;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ClientController;
@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () { return view('welcome'); })->name('home');
-Route::view('/services', 'services')->name('services');
+Route::get('/services', [services::class, 'index'])->name('services');
 Route::view('/team', 'team')->name('team');
 Route::view('/about', 'about')->name('about');
 Route::view('/gallery', 'gallery')->name('gallery');
@@ -29,41 +29,37 @@ Route::view('/gallery', 'gallery')->name('gallery');
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     
-    // This fixes the 'admin_main' error
-    Route::get('/admin/dashboard', [adminController::class, 'index'])
-        ->name('admin_main');
+    // Admin Routes
+    Route::middleware('can:acces-admin')->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin_main');
+        Route::get('/admin', [AdminController::class, "index"]);
+        Route::get('/admin/edit/{appointment}', [AdminController::class, "edit"])->name('admin.edit');
+        Route::put('/admin/update/{appointment}', [AdminController::class, "update"])->name('appointment.update');
+        Route::get('/admin/services', [ServiceController::class, 'index'])->name('admin.services');
+        Route::get('/admin/services/create', [ServiceController::class, 'create'])->name('admin.services.create');
+        Route::post('/admin/services', [ServiceController::class, 'store'])->name('admin.services.store');
+        Route::get('/admin/services/{service}/edit', [ServiceController::class, 'edit'])->name('admin.services.edit');
+        Route::put('/admin/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
+        Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
+        Route::get('/admin/clients', [AdminController::class, 'clients'])->name('admin.clients');
+        Route::delete('/admin/clients/{user}', [AdminController::class, 'destroyClient'])->name('admin.clients.destroy');
+        Route::get('/admin/invoices', [InvoiceController::class, 'index'])->name('admin.invoices');
+        Route::get('/admin/inquiries', [InquiryController::class, 'index'])->name('admin.inquiries');
+    });
 
-    // This fixes the 'client_main' error
-    Route::get('/client/home', [ClientController::class, 'index'])
-        ->name('client_main');
-        
-});
-
-    // Admin Dashboard
-    // Route::get('/admin', function() { 
-    //     return view('admin.dashboard'); 
-    // })->name('admin_main')->middleware('can:acces-admin');
-
-        Route::get('/admin', [admincontroller::class,"index"])->name('admin_main')->middleware('can:acces-admin');
-        Route::get('/admin/edit/{appointment}', [admincontroller::class,"edit"])->name('admin.edit')->middleware('can:acces-admin');
-        Route::put('/admin/update/{appointment}', [admincontroller::class,"update"])->name('appointment.update')->middleware('can:acces-admin');
-    // The Dashboard (This is a GET route, it's safe to redirect here)
-
-    Route::get('/admin/services', [ServiceController::class, 'index'])->name('admin.services');
-    Route::get('/admin/clients', [ClientController::class, 'index'])->name('admin.clients');
-    Route::get('/admin/invoices', [InvoiceController::class, 'index'])->name('admin.invoices');
-    Route::get('/admin/inquiries', [InquiryController::class, 'index'])->name('admin.inquiries');
-
-
-     Route::get('/client/myappointments', [myappointments::class, 'index'])->name('client.appointments');
+    // Client Routes
+    Route::get('/client/home', [ClientController::class, 'index'])->name('client_main');
+    Route::get('/client/myappointments', [myappointments::class, 'index'])->name('client.appointments');
     Route::get('/client/invoices', [invoices::class, 'index'])->name('client.invoices');
     Route::get('/client/services', [services::class, 'index'])->name('client.services');
+    Route::post('/client/appointment/{appointment}/cancel', [ClientController::class, 'cancel'])->name('client.appointment.cancel');
+    
+    Route::post('/book-appointment', [AppointmentController::class, 'store'])->name('appointment.store');
+    Route::get('/book-appointment', function() { return redirect()->route('client_main'); });
+});
 
-
-// The Booking Logic (This is POST only)
-Route::post('/book-appointment', [AppointmentController::class, 'store'])->name('appointment.store');
     // Profile Management
     Route::controller(ProfileController::class)->group(function () {
         Route::get('/profile', 'edit')->name('profile.edit');

@@ -45,9 +45,13 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
+        if (!$user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+
         if (Auth::user()->can('acces-admin')) {
-            return redirect()->route('dashboard');
-        }else{
+            return redirect()->route('admin_main');
+        } else {
             return redirect()->route('client_main');
         }
     }

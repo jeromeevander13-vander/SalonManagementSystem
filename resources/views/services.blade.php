@@ -972,43 +972,30 @@
         event.currentTarget.classList.add('border-red-600');
     }
 </script>
-   <footer class="bg-black text-white py-16">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-            <h2 class="text-4xl md:text-5xl font-black italic uppercase leading-none tracking-tighter">
-                READY FOR SEEING<br>
-                <span class="text-red-600">A NEW LOOK?</span>
-            </h2>
-            <div class="flex gap-6 mt-8 md:mt-0 text-xl">
-                <a href="#" class="hover:text-red-600 transition"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="hover:text-red-600 transition"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="hover:text-red-600 transition"><i class="fab fa-tiktok"></i></a>
+   <footer class="bg-black text-white pt-20 pb-10 relative reveal">
+    <div class="absolute top-0 left-0 w-full h-[1px] bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.5)]"></div>
+
+    <div class="max-w-7xl mx-auto px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-16">
+            <div class="mb-8 md:mb-0">
+                <h2 class="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none">
+                    Ready for seeing<br>
+                    <span class="text-red-600 not-italic">A new look?</span>
+                </h2>
             </div>
-        </div>
 
-        <hr class="border-gray-800 mb-8">
-
-        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center gap-3">
-                <div class="bg-white p-1 rounded-sm flex items-center justify-center w-6 h-6">
-                    <i class="fas fa-phone text-red-600 text-xs"></i>
+          
+        <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500">
+            <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                <div class="bg-white p-2 rounded-sm">
+                    <i class="fas fa-phone-alt text-black"></i>
                 </div>
-                <a href="tel:09289362396" class="text-[11px] font-extrabold text-gray-400 hover:text-white transition tracking-widest">
-                    09289362396
-                </a>
+                <span>0928 936 2396</span>
             </div>
-            
-            <div class="flex gap-8">
-                <a href="#" class="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 hover:text-white transition">
-                    Privacy Policy
-                </a>
-                <a href="#" class="text-[10px] font-extrabold uppercase tracking-widest text-gray-400 hover:text-white transition">
-                    Terms & Conditions
-                </a>
-            </div>
+
+           
         </div>
     </div>
 </footer>
-
 </body>
 </html>

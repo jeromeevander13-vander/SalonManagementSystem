@@ -544,13 +544,7 @@
                 </h2>
             </div>
 
-            <div class="flex space-x-6 text-2xl">
-                <a href="#" class="hover:text-red-600 transition-colors"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="hover:text-red-600 transition-colors"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="hover:text-red-600 transition-colors"><i class="fab fa-tiktok"></i></a>
-            </div>
-        </div>
-
+          
         <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500">
             <div class="flex items-center space-x-3 mb-4 md:mb-0">
                 <div class="bg-white p-2 rounded-sm">
@@ -559,10 +553,7 @@
                 <span>0928 936 2396</span>
             </div>
 
-            <div class="flex space-x-8">
-                <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                <a href="#" class="hover:text-white transition-colors">Terms & Conditions</a>
-            </div>
+           
         </div>
     </div>
 </footer>

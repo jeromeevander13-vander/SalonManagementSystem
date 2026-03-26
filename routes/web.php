@@ -12,13 +12,22 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\services;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\TestimonialController;
+use App\Models\Testimonial;
 
 /*
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () { return view('welcome'); })->name('home');
+Route::get('/', function () {
+    $testimonials = Testimonial::with('user')->where('is_visible', true)->latest()->get();
+    return view('welcome', compact('testimonials'));
+})->name('home');
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
+});
 Route::get('/services', [services::class, 'index'])->name('services');
 Route::view('/team', 'team')->name('team');
 Route::view('/about', 'about')->name('about');

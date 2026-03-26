@@ -134,7 +134,7 @@
                                 {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('M d, Y - h:i A') }}
                             </td>
                             <td class="px-6 py-4 text-green-500 font-black italic text-[10px]">
-                                ${{ in_array(strtolower($appointment->status), ['completed', 'accepted']) ? number_format($price, 2) : '0.00' }}
+                                ${{ in_array(strtolower($appointment->status), ['completed', 'confirmed']) ? number_format($price, 2) : '0.00' }}
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <span class="status-badge status-{{ strtolower($appointment->status) }}">

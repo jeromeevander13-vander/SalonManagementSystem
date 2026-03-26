@@ -11,6 +11,7 @@
     <title>Tonet Salon | Home</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         /* 1. GLOBAL REFINEMENTS */
         html, body {
@@ -41,7 +42,8 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.98);
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
             z-index: 9998;
             display: flex;
             flex-direction: column;
@@ -49,10 +51,23 @@
             align-items: center;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            padding: 2rem;
         }
         #mobile-menu.active { opacity: 1; visibility: visible; }
-        .mobile-link { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; color: white; margin: 15px 0; text-decoration: none; letter-spacing: -0.05em; }
+        .mobile-link { 
+            font-size: 1.75rem; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            color: white; 
+            margin: 0.75rem 0; 
+            text-decoration: none; 
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+        .mobile-link:hover { color: #ff0000; }
 
         /* 3. HERO SECTION */
         .hero-section {
@@ -69,19 +84,29 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 60%;
+            width: 100%;
             height: 100%;
             background: url("{{ asset('images/atonet.jpg') }}") center right/cover no-repeat;
-            mask-image: linear-gradient(to right, transparent 0%, black 40%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 40%);
+            mask-image: linear-gradient(to right, transparent 0%, black 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 100%);
             z-index: 1;
+            opacity: 0.4;
+        }
+
+        @media (min-width: 768px) {
+            .hero-section::after {
+                width: 60%;
+                opacity: 1;
+                mask-image: linear-gradient(to right, transparent 0%, black 40%);
+                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 40%);
+            }
         }
 
         .hero-title {
-            font-size: clamp(3rem, 10vw, 6.5rem); 
-            line-height: 0.85; 
-            letter-spacing: -0.05em; 
-            font-weight: 900;
+            font-size: clamp(2.5rem, 12vw, 6.5rem); 
+            line-height: 0.9; 
+            letter-spacing: -0.03em; 
+            font-weight: 950;
             text-transform: uppercase;
             color: white;
             position: relative;
@@ -108,11 +133,19 @@
 
         .gray-content-area {
             background: linear-gradient(135deg, #0a0000 0%, #2a0000 100%); 
-            padding: 160px 0 120px;
-            margin-top: -80px;
-            clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%);
+            padding: 100px 0 80px;
+            margin-top: -40px;
+            clip-path: polygon(0 2%, 100% 0, 100% 100%, 0 100%);
             position: relative;
             z-index: 10;
+        }
+
+        @media (min-width: 768px) {
+            .gray-content-area {
+                padding: 160px 0 120px;
+                margin-top: -80px;
+                clip-path: polygon(0 5%, 100% 0, 100% 100%, 0 100%);
+            }
         }
 
         .stylist-card {
@@ -124,8 +157,11 @@
         }
         
         .stylist-image {
-            width: 220px; height: 220px; border-radius: 50%; object-fit: cover;
-            margin: 0 auto 30px; border: 6px solid #ff0000; box-shadow: 0 10px 30px rgba(255,0,0,0.2); 
+            width: 180px; height: 180px; border-radius: 50%; object-fit: cover;
+            margin: 0 auto 30px; border: 4px solid #ff0000; box-shadow: 0 10px 30px rgba(255,0,0,0.2); 
+        }
+        @media (min-width: 768px) {
+            .stylist-image { width: 220px; height: 220px; border: 6px solid #ff0000; }
         }
 
         .info-card {
@@ -198,6 +234,7 @@
             <div class="hidden md:flex items-center space-x-10 text-[10px] font-bold uppercase tracking-[0.2em]">
                 <a href="{{ route('home') }}" class="text-red-500 border-b-2 border-red-500 pb-1">Home</a>
                 <a href="{{ route('services') }}" class="hover:text-red-500 transition">Services</a>
+            
                 @auth
                     <a href="{{ Auth::user()->role === 'admin' ? route('admin_main') : route('client_main') }}">Dashboard</a>
                     <form method="POST" action="{{ route('logout') }}" class="m-0">
@@ -219,6 +256,7 @@
     <div id="mobile-menu">
         <a href="{{ route('home') }}" class="mobile-link text-red-600">Home</a>
         <a href="{{ route('services') }}" class="mobile-link">Services</a>
+      
         @auth
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -278,7 +316,7 @@
                     <h3 class="text-2xl font-black uppercase tracking-tighter">Jeralyn Desphy</h3>
                     <p class="text-red-600 font-bold text-xs uppercase mb-4">Senior Technical Staff</p>
                     <p class="text-sm font-medium text-gray-300 leading-loose px-10">Veteran stylist specializing in technical services and care since 2010.</p>
-                    <a href="#" class="btn-main mt-6">Know Her More</a>
+                    <a href="https://www.facebook.com/lynz.sausa?rdid=ypw0MIoNU3g3Ilfx&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1AxpbcoTPv#" class="btn-main mt-6">Know Her More</a>
                 </div>
             </div>
 <section class="about-content">
@@ -351,7 +389,7 @@
 
                 <div class="pt-4">
                     <p class="text-[9px] uppercase tracking-[0.2em] text-gray-500 mb-4 font-bold">Select a transformation:</p>
-                    <div class="grid grid-cols-6 gap-2 max-w-sm">
+                    <div class="grid grid-cols-4 sm:grid-cols-6 gap-2 max-w-sm">
                         @for ($i = 1; $i <= 12; $i++)
                             <button onclick="manualSelect({{ $i - 1 }})" 
                                     class="thumb-btn border-2 border-transparent hover:border-red-600 transition-all overflow-hidden rounded-md h-12 w-full">
@@ -531,6 +569,102 @@
     updateGallery(0);
     startAutoPlay();
 </script>
+<section id="testimonials" class="bg-black py-32 reveal">
+    <div class="max-w-7xl mx-auto px-8">
+        <div class="text-center mb-20">
+            <span class="text-red-600 font-black text-xs uppercase tracking-[0.3em]">Voices of Beauty</span>
+            <h2 class="text-5xl font-black uppercase italic mt-4 text-white">Client <span class="text-red-600">Testimonies</span></h2>
+        </div>
+
+        @if(session('success'))
+            <div class="mb-10 p-4 bg-green-900/20 border border-green-900 rounded text-green-500 text-xs font-bold uppercase tracking-widest text-center shadow-lg">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+            @forelse($testimonials as $testimonial)
+                <div class="bg-zinc-900/50 p-8 border border-red-900/20 rounded-2xl relative group hover:border-red-600/50 transition-all duration-500 shadow-xl self-start">
+                    <div class="absolute -top-4 -left-4 text-4xl text-red-600 opacity-20 group-hover:opacity-100 transition-opacity">
+                        <i class="fas fa-quote-left"></i>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 rounded-full overflow-hidden border border-red-900 bg-black flex items-center justify-center shrink-0">
+                            @if($testimonial->user->avatar)
+                                <img src="{{ asset('storage/' . $testimonial->user->avatar) }}" class="w-full h-full object-cover">
+                            @else
+                                <span class="text-white font-black italic">{{ substr($testimonial->user->name, 0, 1) }}</span>
+                            @endif
+                        </div>
+                        <div>
+                            <h4 class="text-white font-bold uppercase text-xs tracking-wider">{{ $testimonial->user->name }}</h4>
+                            <div class="flex text-red-500 text-[10px] mt-1 space-x-0.5">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="{{ $i <= $testimonial->rating ? 'fas' : 'far' }} fa-star"></i>
+                                @endfor
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-gray-400 text-sm italic leading-relaxed">
+                        "{{ $testimonial->comment }}"
+                    </p>
+                </div>
+            @empty
+                <div class="col-span-full border-2 border-dashed border-zinc-800 rounded-3xl p-16 text-center">
+                    <p class="text-gray-600 font-bold uppercase tracking-[0.4em] text-xs">Be the first to share your magic experience</p>
+                </div>
+            @endforelse
+        </div>
+
+        @auth
+            @if(Auth::user()->role === 'client')
+                <div class="max-w-2xl mx-auto bg-zinc-900 p-10 border border-red-600/20 rounded-3xl shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-red-600/5 blur-3xl rounded-full"></div>
+                    
+                    <div class="relative z-10">
+                        <h3 class="text-white font-black uppercase text-xl italic mb-1 tracking-tighter">Rate Your Experience</h3>
+                        <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-8">We value your feedback to keep our gold standard.</p>
+
+                        <form action="{{ route('testimonials.store') }}" method="POST" class="space-y-6" x-data="{ rating: 5 }">
+                            @csrf
+                            <input type="hidden" name="rating" :value="rating">
+                            
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-4 tracking-widest">Select Your Rating</label>
+                                <div class="flex space-x-4">
+                                    <template x-for="i in 5">
+                                        <button type="button" @click="rating = i" class="text-2xl transition-transform hover:scale-125 focus:outline-none">
+                                            <i :class="i <= rating ? 'fas' : 'far'" class="fa-star" :class="i <= rating ? 'text-red-500' : 'text-zinc-700'"></i>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">Share Your Thoughts</label>
+                                <textarea name="comment" rows="4" 
+                                    class="w-full bg-black border border-red-900/30 rounded-xl p-4 text-white text-sm focus:border-red-600 focus:ring-1 focus:ring-red-600/20 outline-none transition-all placeholder:text-zinc-700"
+                                    placeholder="Tell us what you loved about our service..."></textarea>
+                                @error('comment')
+                                    <p class="text-red-500 text-[10px] mt-2 font-bold uppercase">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <button type="submit" class="btn-main w-full py-5 rounded-xl shadow-[0_10px_30px_rgba(220,38,38,0.2)]">Post My Testimony</button>
+                        </form>
+                    </div>
+                </div>
+            @endif
+        @else
+            <div class="text-center pt-10">
+                <a href="{{ route('login') }}" class="text-[10px] font-black uppercase italic text-red-600 border border-red-900/30 px-8 py-3 rounded-full hover:bg-red-600 hover:text-white transition-all tracking-[0.2em]">Log in to leave a Review</a>
+            </div>
+        @endauth
+    </div>
+</section>
+
 <br>
 <footer class="bg-black text-white pt-20 pb-10 relative reveal">
     <div class="absolute top-0 left-0 w-full h-[1px] bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.5)]"></div>

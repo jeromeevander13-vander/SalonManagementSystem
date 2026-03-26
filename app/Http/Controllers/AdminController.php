@@ -15,6 +15,7 @@ class AdminController extends Controller
         $endDate = $request->input('end_date');
         $status = $request->input('status');
         $date = $request->input('date');
+        $service_id = $request->input('service_id');
 
         $user = User::where('role', 'admin')->get();
         
@@ -31,6 +32,9 @@ class AdminController extends Controller
         }
         if ($date) {
             $query->whereDate('appointment_time', $date);
+        }
+        if ($service_id && $service_id !== 'All Services') {
+            $query->where('service_id', $service_id);
         }
         
         $data = $query->get();
@@ -52,7 +56,7 @@ class AdminController extends Controller
         
         $salesData = $salesQuery->get();
         $completedAppointments = $salesData->filter(function($appointment) {
-            return in_array(strtolower($appointment->status), ['completed', 'accepted']);
+            return in_array(strtolower($appointment->status), ['completed', 'confirmed']);
         });
 
         $totalAppointments = $totalAppointmentsCount; // Use global for the overview card
@@ -94,7 +98,7 @@ class AdminController extends Controller
                 'email' => $client->email,
                 'appointments_count' => $clientAppointments->count(),
                 'total_spent' => $clientAppointments->filter(function($app) {
-                    return in_array(strtolower($app->status), ['completed', 'accepted']);
+                    return in_array(strtolower($app->status), ['completed', 'confirmed']);
                 })->sum($getPrice)
             ];
         })->sortByDesc('total_spent');
@@ -131,7 +135,7 @@ class AdminController extends Controller
             "totalCustomers", "totalAppointments", "pendingAppointmentsCount", "totalServices",
             "todaySales", "yesterdaySales", "last7DaysSales", "totalSales",
             "recentAppointments", "chartData", "chartLabels", "clientReport",
-            "startDate", "endDate", "status", "date"
+            "startDate", "endDate", "status", "date", "service_id"
         ));
     }
 

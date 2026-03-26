@@ -58,14 +58,16 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background-color: rgba(0, 0, 0, 0.98);
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
             z-index: 9998;
-            display: none; /* Hidden by default */
+            display: none; 
             flex-direction: column;
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            padding: 2rem;
         }
 
         #mobile-menu.active {
@@ -74,13 +76,15 @@
         }
 
         .mobile-link {
-            font-size: 2.5rem;
+            font-size: 1.75rem;
             font-weight: 900;
             text-transform: uppercase;
             color: white;
-            margin: 15px 0;
+            margin: 0.75rem 0;
             text-decoration: none;
-            letter-spacing: -0.05em;
+            letter-spacing: 0.1em;
+            text-align: center;
+            width: 100%;
         }
 
         /* --- 2. HERO SECTION --- */
@@ -95,12 +99,12 @@
         }
 
         .hero-title {
-            font-size: clamp(3rem, 12vw, 8rem);
+            font-size: clamp(2.5rem, 12vw, 8rem);
             font-weight: 950;
             font-style: italic;
             letter-spacing: -0.05em;
             text-transform: uppercase;
-            line-height: 0.85;
+            line-height: 0.9;
             margin: 0;
             color: white;
         }
@@ -265,7 +269,7 @@
                         Select a Transformation <span class="w-10 h-[1px] bg-zinc-800"></span>
                     </h3>
                     
-                    <div class="grid grid-cols-5 md:grid-cols-8 gap-2 mb-10">
+                    <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-2 mb-10">
                         @php
                         $services = [
                             ['rebond1.jpg', 'REBOND BRAZILLIAN BOTOX', '₱2,000.00', 'This is a premium "all-in-one" treatment that permanently straightens hair while using "Botox" nutrients to repair damage and add deep moisture.'],
@@ -406,7 +410,7 @@
                         Select Treatment <span class="flex-grow h-[1px] bg-zinc-800"></span>
                     </h3>
                     
-                    <div class="grid grid-cols-4 md:grid-cols-6 gap-3 mb-10">
+                    <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-10">
                         @php
                         $other_services = [
                             ['manicure1.png', 'PEDICURE/MANICURE', '₱100.00', 'A manicure focuses on the hands, while a pedicure focuses on the feet. The primary goal is grooming the nails and the skin immediately surrounding them.'],
@@ -516,7 +520,7 @@
                         Select a Target Area <span class="flex-grow h-[1px] bg-zinc-800"></span>
                     </h3>
                     
-                    <div class="grid grid-cols-4 md:grid-cols-6 gap-3 mb-10">
+                    <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-10">
                         @php
                         $rf_services = [
                             ['rf1.png', 'RF FACE', '1 Session: ₱229.00<br>5 Sessions: ₱1,030.00<br>12 Sessions: ₱2,418.00', 'A focused radio frequency treatment designed to tighten skin and improve facial contours for a rejuvenated look.'],
@@ -673,7 +677,7 @@
                         Select a Technique <span class="flex-grow h-[1px] bg-zinc-800"></span>
                     </h3>
                     
-                    <div class="grid grid-cols-5 gap-3 mb-10">
+                    <div class="grid grid-cols-4 sm:grid-cols-5 gap-3 mb-10">
                         @php
                         $eb_services = [
                             ['eyebrows1.png', 'MICRO SHADING', '1 Session: ₱1,299.00<br>2 Sessions: ₱2,399.00', 'Creates a soft, powdered makeup look that adds fullness and definition to sparse eyebrows.'],
@@ -788,7 +792,7 @@
                         Select Service <span class="flex-grow h-[1px] bg-zinc-800"></span>
                     </h3>
                     
-                    <div class="grid grid-cols-4 md:grid-cols-6 gap-3 mb-10">
+                    <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-10">
                         @php
                         $misc_services = [
                             ['lips.png', 'LIP BLUSH', '1 Session: ₱1,299.00<br>2 Sessions: ₱2,399.00', 'A semi-permanent tint that enhances your natural lip color and shape for a soft, "just-bitten" flush.'],
@@ -899,7 +903,7 @@
                         Select Target Area <span class="flex-grow h-[1px] bg-zinc-800"></span>
                     </h3>
                     
-                    <div class="grid grid-cols-4 md:grid-cols-6 gap-3 mb-10">
+                    <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-10">
                         @php
                         $meso_services = [
                             ['meso1.png', 'MESO LIPO FACE (FREE RF)', '1 Session: ₱429.00<br>5 Sessions: ₱1,930.00<br>12 Sessions: ₱4,536.00', 'A non-surgical fat-melting injection that slims the face and jawline, paired with RF to tighten the skin.'],

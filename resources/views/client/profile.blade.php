@@ -72,8 +72,12 @@
                         <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
                             <button @click="dropdownOpen = !dropdownOpen" class="flex items-center focus:outline-none group">
                                 <span class="hidden sm:inline text-[10px] font-black uppercase mr-2 text-gray-500 italic group-hover:text-red-500 transition tracking-widest">{{ Auth::user()->name }}</span>
-                                <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-black text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-110">
-                                    {{ substr(Auth::user()->name, 0, 1) }}
+                                <div class="w-8 h-8 rounded-full bg-red-600 overflow-hidden flex items-center justify-center font-black text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-110">
+                                    @if(Auth::user()->avatar)
+                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
+                                    @else
+                                        {{ substr(Auth::user()->name, 0, 1) }}
+                                    @endif
                                 </div>
                                 <svg class="ms-1 fill-current h-4 w-4 text-red-600 transition-transform group-hover:translate-y-0.5" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                             </button>

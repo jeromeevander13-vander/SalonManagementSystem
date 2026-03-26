@@ -29,9 +29,18 @@
          }">
         
         <div class="mb-8 flex justify-between items-start">
-            <div>
-                <h2 class="text-white text-2xl font-black uppercase tracking-tighter">Edit Session</h2>
-                <p class="text-gray-500 text-[10px] mt-1 uppercase tracking-widest">Appointment ID: #{{ $appointment->id }}</p>
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full border border-red-900 overflow-hidden flex items-center justify-center bg-black">
+                    @if($appointment->user?->avatar)
+                        <img src="{{ asset('storage/' . $appointment->user?->avatar) }}" class="w-full h-full object-cover">
+                    @else
+                        <span class="text-white font-black italic">{{ substr($appointment->customer_name, 0, 1) }}</span>
+                    @endif
+                </div>
+                <div>
+                    <h2 class="text-white text-2xl font-black uppercase tracking-tighter">Edit Session</h2>
+                    <p class="text-gray-500 text-[10px] mt-1 uppercase tracking-widest">{{ $appointment->customer_name }} • ID: #{{ $appointment->id }}</p>
+                </div>
             </div>
             <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter transition-all duration-500 border"
                 :class="{
@@ -68,14 +77,20 @@
 
                 <div class="space-y-2">
                     <label class="block text-[10px] font-bold uppercase text-red-600 tracking-[0.2em]">Time Slot</label>
-                    <select name="appointment_time" x-model="bookingData.time" required
-                        class="w-full bg-[#111] border border-red-900/40 rounded-lg p-3 text-white text-sm focus:border-red-600 focus:ring-1 focus:ring-red-600/20 outline-none transition-all">
-                        <option value="09:00:00">09:00 AM</option>
-                        <option value="10:30:00">10:30 AM</option>
-                        <option value="13:00:00">01:00 PM</option>
-                        <option value="15:30:00">03:30 PM</option>
-                        <option value="17:00:00">05:00 PM</option>
-                    </select>
+                        <select name="appointment_time" x-model="bookingData.time" required
+                            class="w-full bg-[#111] border border-red-900/40 rounded-lg p-3 text-white text-sm focus:border-red-600 focus:ring-1 focus:ring-red-600/20 outline-none transition-all cursor-pointer">
+                            <option value="09:00:00">09:00 AM</option>
+                            <option value="10:00:00">10:00 AM</option>
+                            <option value="11:00:00">11:00 AM</option>
+                            <option value="12:00:00">12:00 PM</option>
+                            <option value="13:00:00">01:00 PM</option>
+                            <option value="14:00:00">02:00 PM</option>
+                            <option value="15:00:00">03:00 PM</option>
+                            <option value="16:00:00">04:00 PM</option>
+                            <option value="17:00:00">05:00 PM</option>
+                            <option value="18:00:00">06:00 PM</option>
+                            <option value="19:00:00">07:00 PM</option>
+                        </select>
                 </div>
             </div>
 

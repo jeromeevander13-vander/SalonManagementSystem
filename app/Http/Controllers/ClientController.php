@@ -34,18 +34,18 @@ class ClientController extends Controller
         $totalAppointments = $appointments->count();
         
         $upcomingAppointmentsCount = $appointments->filter(function ($app) {
-            return in_array(strtolower($app->status), ['pending', 'accepted']) && 
+            return in_array(strtolower($app->status), ['pending', 'confirmed']) && 
                    \Carbon\Carbon::parse($app->appointment_time)->isFuture();
         })->count();
 
         $totalSpent = $appointments->filter(function ($app) {
-            return in_array(strtolower($app->status), ['completed', 'accepted']);
+            return in_array(strtolower($app->status), ['completed', 'confirmed']);
         })->sum($getPrice);
 
         $recentAppointments = $appointments->take(5);
         
         $nextVisit = $appointments->filter(function ($app) {
-            return in_array(strtolower($app->status), ['pending', 'accepted']) && 
+            return in_array(strtolower($app->status), ['pending', 'confirmed']) && 
                    \Carbon\Carbon::parse($app->appointment_time)->isFuture();
         })->sortBy('appointment_time')->first();
 

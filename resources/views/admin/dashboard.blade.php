@@ -96,8 +96,7 @@
                     <button @click="currentTab = 'services'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">SERVICES</button>
                     <button @click="currentTab = 'clients'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">CLIENTS</button>
                     <button @click="currentTab = 'reports'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">REPORTS</button>
-                    <button @click="currentTab = 'inquiries'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">INQUIRIES</button>
-                </div>
+                  
             </div>
         </nav>
 
@@ -270,7 +269,16 @@
                                     @foreach ($recentAppointments as $appointment)
                                     <tr class="border-b border-red-900/10 hover:bg-white/5 transition-colors">
                                         <td class="px-6 py-3 text-white font-bold uppercase text-[10px] tracking-wider italic">
-                                            {{ $appointment->customer_name }}
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-6 h-6 rounded-full overflow-hidden border border-red-900 bg-black flex items-center justify-center">
+                                                    @if($appointment->user?->avatar)
+                                                        <img src="{{ asset('storage/' . $appointment->user->avatar) }}" class="w-full h-full object-cover">
+                                                    @else
+                                                        {{ substr($appointment->customer_name, 0, 1) }}
+                                                    @endif
+                                                </div>
+                                                {{ $appointment->customer_name }}
+                                            </div>
                                         </td>
                                         <td class="px-6 py-3 text-white font-bold uppercase text-[10px] tracking-wider italic">
                                             {{ $appointment->service?->name ?? 'N/A' }}
@@ -317,23 +325,32 @@
 
                 <div class="bg-card-dark border border-red-900 rounded p-4 mb-6 shadow-xl">
                     <form method="GET" action="{{ route('admin_main') }}" class="flex flex-col md:flex-row gap-4 items-end">
-                        <div class="w-full md:w-1/3">
-                            <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Filter Status</label>
-                            <select name="status" class="w-full bg-midnight border border-red-900 text-gray-400 text-xs rounded px-3 py-2 outline-none uppercase font-bold tracking-widest">
+                        <div class="w-full md:w-1/4">
+                            <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1 tracking-widest">Status</label>
+                            <select name="status" class="w-full bg-midnight border border-red-900 text-gray-400 text-xs rounded px-3 py-2.5 outline-none uppercase font-bold tracking-widest focus:border-red-600 transition">
                                 <option value="All Statuses" {{ $status == 'All Statuses' ? 'selected' : '' }}>All Statuses</option>
                                 <option value="pending" {{ $status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="confirmed" {{ $status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
                                 <option value="completed" {{ $status == 'completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="accepted" {{ $status == 'accepted' ? 'selected' : '' }}>Accepted</option>
                                 <option value="cancelled" {{ $status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                             </select>
                         </div>
-                        <div class="w-full md:w-1/3">
-                            <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1">Date</label>
-                            <input type="date" name="date" value="{{ $date }}" class="w-full bg-midnight border border-red-900 text-gray-400 text-xs rounded px-3 py-2 outline-none uppercase font-bold tracking-widest">
+                        <div class="w-full md:w-1/4">
+                            <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1 tracking-widest">Service</label>
+                            <select name="service_id" class="w-full bg-midnight border border-red-900 text-gray-400 text-xs rounded px-3 py-2.5 outline-none uppercase font-bold tracking-widest focus:border-red-600 transition">
+                                <option value="All Services" {{ $service_id == 'All Services' ? 'selected' : '' }}>All Services</option>
+                                @foreach($services as $service)
+                                    <option value="{{ $service->id }}" {{ $service_id == $service->id ? 'selected' : '' }}>{{ $service->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="w-full md:w-1/4">
+                            <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1 tracking-widest">Date</label>
+                            <input type="date" name="date" value="{{ $date }}" class="w-full bg-midnight border border-red-900 text-gray-400 text-xs rounded px-3 py-2.5 outline-none uppercase font-bold tracking-widest focus:border-red-600 transition">
                         </div>
                         <div class="flex gap-2">
-                            <button type="submit" class="bg-red-700 hover:bg-red-600 text-white text-[10px] font-black uppercase px-6 py-2.5 rounded transition shadow-lg">Filter</button>
-                            <a href="{{ route('admin_main') }}" class="bg-gray-800 hover:bg-gray-700 text-gray-400 text-[10px] font-black uppercase px-6 py-2.5 rounded transition shadow-lg text-center flex items-center justify-center">Clear</a>
+                            <button type="submit" class="bg-red-700 hover:bg-red-600 text-white text-[10px] font-black uppercase px-6 py-3 rounded transition shadow-lg">Filter</button>
+                            <a href="{{ route('admin_main') }}" class="bg-gray-800 hover:bg-gray-700 text-gray-400 text-[10px] font-black uppercase px-6 py-3 rounded transition shadow-lg text-center flex items-center justify-center">Clear</a>
                         </div>
                     </form>
                 </div>
@@ -358,7 +375,16 @@
                                 @foreach ($data as $datas)
                                 <tr class="border-b border-red-900/10 hover:bg-white/5 transition-colors">
                                     <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
-                                        {{$datas->customer_name}}
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded-full overflow-hidden border border-red-900 bg-black flex items-center justify-center">
+                                                @if($datas->user?->avatar)
+                                                    <img src="{{ asset('storage/' . $datas->user->avatar) }}" class="w-full h-full object-cover">
+                                                @else
+                                                    {{ substr($datas->customer_name, 0, 1) }}
+                                                @endif
+                                            </div>
+                                            {{$datas->customer_name}}
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
                                         {{$datas->phone}}
@@ -427,10 +453,16 @@
                             <label class="block text-[10px] font-bold uppercase text-red-600 mb-2 tracking-widest">Time Slot</label>
                             <select name="appointment_time" x-model="selectedAppointment.time" class="w-full bg-[#111] border border-[#222] text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-red-900 transition appearance-none">
                                 <option value="09:00:00">09:00 AM</option>
-                                <option value="10:30:00">10:30 AM</option>
+                                <option value="10:00:00">10:00 AM</option>
+                                <option value="11:00:00">11:00 AM</option>
+                                <option value="12:00:00">12:00 PM</option>
                                 <option value="13:00:00">01:00 PM</option>
-                                <option value="15:30:00">03:30 PM</option>
+                                <option value="14:00:00">02:00 PM</option>
+                                <option value="15:00:00">03:00 PM</option>
+                                <option value="16:00:00">04:00 PM</option>
                                 <option value="17:00:00">05:00 PM</option>
+                                <option value="18:00:00">06:00 PM</option>
+                                <option value="19:00:00">07:00 PM</option>
                             </select>
                         </div>
                     </div>

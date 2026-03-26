@@ -127,8 +127,12 @@
                         <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
                             <button @click="dropdownOpen = !dropdownOpen" class="flex items-center focus:outline-none group">
                                 <span class="hidden sm:inline text-[10px] font-black uppercase mr-2 text-gray-500 italic group-hover:text-red-500 transition tracking-widest">{{ Auth::user()->name }}</span>
-                                <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-black text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-110">
-                                    {{ substr(Auth::user()->name, 0, 1) }}
+                                <div class="w-8 h-8 rounded-full bg-red-600 overflow-hidden flex items-center justify-center font-black text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-110">
+                                    @if(Auth::user()->avatar)
+                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
+                                    @else
+                                        {{ substr(Auth::user()->name, 0, 1) }}
+                                    @endif
                                 </div>
                                 <svg class="ms-1 fill-current h-4 w-4 text-red-600 transition-transform group-hover:translate-y-0.5" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                             </button>
@@ -446,10 +450,16 @@
                                 <select name="appointment_time" x-model="bookingData.time" required
                                     class="w-full bg-black border border-red-900 rounded p-3 text-white text-sm focus:border-red-600 focus:ring-0 outline-none">
                                     <option value="09:00:00">09:00 AM</option>
-                                    <option value="10:30:00">10:30 AM</option>
+                                    <option value="10:00:00">10:00 AM</option>
+                                    <option value="11:00:00">11:00 AM</option>
+                                    <option value="12:00:00">12:00 PM</option>
                                     <option value="13:00:00">01:00 PM</option>
-                                    <option value="15:30:00">03:30 PM</option>
+                                    <option value="14:00:00">02:00 PM</option>
+                                    <option value="15:00:00">03:00 PM</option>
+                                    <option value="16:00:00">04:00 PM</option>
                                     <option value="17:00:00">05:00 PM</option>
+                                    <option value="18:00:00">06:00 PM</option>
+                                    <option value="19:00:00">07:00 PM</option>
                                 </select>
                                 @error('appointment_time')
                                     <span class="text-red-500 text-xs">{{ $message }}</span>

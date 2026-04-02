@@ -271,7 +271,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 text-right text-white font-black italic text-[10px]">
-                                                {{ $app->service ? $app->service->price : '---' }}
+                                                {{ $app->service ? '₱' . number_format($app->service->price, 2) : '---' }}
                                             </td>
                                         </tr>
                                         @endforeach
@@ -316,7 +316,6 @@
             </div>
 
             <div x-show="currentTab === 'myappointments'" x-cloak>
-                <button @click="showModal = true; step = 1" class="bg-red-600 text-white px-8 py-3 rounded font-black uppercase tracking-tighter hover:bg-red-700 transition shadow-lg transform hover:scale-105 mb-6">Book Appointment</button>
                 @include('client.myappointments')
             </div>
 
@@ -343,7 +342,7 @@
                             <div class="flex justify-between items-end pt-3 border-t border-red-900/50">
                                 <div class="price-container cursor-help flex-1">
                                     <span class="text-[9px] text-gray-500 uppercase block font-bold">Starts At:</span>
-                                    <span class="text-red-600 font-black text-lg leading-none" x-text="service.price"></span>
+                                    <span class="text-red-600 font-black text-lg leading-none" x-text="'₱' + service.price"></span>
                                     <div class="session-info mt-1" x-show="service.sessions">
                                         <template x-for="session in service.sessions">
                                             <p class="text-white text-[9px] font-bold uppercase tracking-tight" x-text="session"></p>
@@ -403,7 +402,7 @@
                                     <div class="flex justify-between items-end pt-3 border-t border-red-900/50">
                                         <div class="price-container cursor-help flex-1">
                                             <span class="text-[9px] text-gray-500 uppercase block font-bold">Starts At:</span>
-                                            <span class="text-red-600 font-black text-lg leading-none" x-text="service.price"></span>
+                                            <span class="text-red-600 font-black text-lg leading-none" x-text="'₱' + service.price"></span>
                                             <div class="session-info mt-1" x-show="service.sessions">
                                                 <template x-for="session in service.sessions">
                                                     <p class="text-white text-[9px] font-bold uppercase tracking-tight" x-text="session"></p>
@@ -429,7 +428,7 @@
                             <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Service Selected</p>
                             <h3 class="text-xl font-black text-white uppercase italic tracking-tighter" x-text="selectedService"></h3>
                             <div class="flex justify-between items-center mt-2">
-                                <p class="text-red-600 font-black text-lg" x-text="selectedPrice"></p>
+                                <p class="text-red-600 font-black text-lg" x-text="'₱' + selectedPrice"></p>
                                 <p class="text-gray-400 font-bold text-xs uppercase tracking-widest" x-text="'Duration: ' + selectedDuration"></p>
                             </div>
                         </div>

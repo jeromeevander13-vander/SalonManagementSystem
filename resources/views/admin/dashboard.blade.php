@@ -144,10 +144,10 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 text-center">
-                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">${{ number_format($todaySales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Today's Sales</p></div>
-                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">${{ number_format($yesterdaySales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Yesterday's Sales</p></div>
-                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">${{ number_format($last7DaysSales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Last 7 Days Sales</p></div>
-                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">${{ number_format($totalSales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Total Sales</p></div>
+                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">₱{{ number_format($todaySales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Today's Sales</p></div>
+                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">₱{{ number_format($yesterdaySales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Yesterday's Sales</p></div>
+                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">₱{{ number_format($last7DaysSales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Last 7 Days Sales</p></div>
+                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">₱{{ number_format($totalSales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Total Sales</p></div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -173,43 +173,43 @@
                             <div class="absolute top-0 left-0 group" style="top: {{ $y1 }}px;">
                                 <div class="w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-midnight transition-all duration-1000 group-hover:scale-150"></div>
                                 <div class="absolute bottom-4 left-0 -translate-x-1/2 bg-red-900 bg-opacity-90 text-[8px] text-white px-2 py-0.5 rounded font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-red-500 shadow-lg z-10">
-                                    ${{ number_format($chartData[0], 2) }}
+                                    ₱{{ number_format($chartData[0], 2) }}
                                 </div>
                                 <div class="absolute bottom-4 left-0 -translate-x-1/2 text-[8px] text-gray-400 font-bold whitespace-nowrap opacity-100 group-hover:opacity-0 transition-opacity">
-                                    ${{ number_format($chartData[0], 0) }}
+                                    ₱{{ number_format($chartData[0], 0) }}
                                 </div>
                             </div>
 
                             <!-- Point 2 -->
-                            <div class="absolute top-0 left-1/3 group" style="top: {{ $y2 }}px;">
+                             <div class="absolute top-0 left-1/3 group" style="top: {{ $y2 }}px;">
                                 <div class="w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-midnight transition-all duration-1000 group-hover:scale-150"></div>
                                 <div class="absolute bottom-4 left-0 -translate-x-1/2 bg-red-900 bg-opacity-90 text-[8px] text-white px-2 py-0.5 rounded font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-red-500 shadow-lg z-10">
-                                    ${{ number_format($chartData[1], 2) }}
+                                    ₱{{ number_format($chartData[1], 2) }}
                                 </div>
                                 <div class="absolute bottom-4 left-0 -translate-x-1/2 text-[8px] text-gray-400 font-bold whitespace-nowrap opacity-100 group-hover:opacity-0 transition-opacity">
-                                    ${{ number_format($chartData[1], 0) }}
+                                    ₱{{ number_format($chartData[1], 0) }}
                                 </div>
                             </div>
 
                             <!-- Point 3 -->
-                            <div class="absolute top-0 left-2/3 group" style="top: {{ $y3 }}px;">
+                             <div class="absolute top-0 left-2/3 group" style="top: {{ $y3 }}px;">
                                 <div class="w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-midnight transition-all duration-1000 group-hover:scale-150"></div>
                                 <div class="absolute bottom-4 left-0 -translate-x-1/2 bg-red-900 bg-opacity-90 text-[8px] text-white px-2 py-0.5 rounded font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-red-500 shadow-lg z-10">
-                                    ${{ number_format($chartData[2], 2) }}
+                                    ₱{{ number_format($chartData[2], 2) }}
                                 </div>
                                 <div class="absolute bottom-4 left-0 -translate-x-1/2 text-[8px] text-gray-400 font-bold whitespace-nowrap opacity-100 group-hover:opacity-0 transition-opacity">
-                                    ${{ number_format($chartData[2], 0) }}
+                                    ₱{{ number_format($chartData[2], 0) }}
                                 </div>
                             </div>
 
                             <!-- Point 4 -->
-                            <div class="absolute top-0 right-0 group" style="top: {{ $y4 }}px;">
+                             <div class="absolute top-0 right-0 group" style="top: {{ $y4 }}px;">
                                 <div class="w-3 h-3 bg-red-600 rounded-full translate-x-1.5 -translate-y-1.5 border-2 border-midnight transition-all duration-1000 shadow-[0_0_10px_#ff0000] group-hover:scale-150"></div>
                                 <div class="absolute bottom-4 right-0 translate-x-1/2 bg-red-900 bg-opacity-90 text-[8px] text-white px-2 py-0.5 rounded font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-red-500 shadow-lg z-10">
-                                    ${{ number_format($chartData[3], 2) }}
+                                    ₱{{ number_format($chartData[3], 2) }}
                                 </div>
                                 <div class="absolute bottom-4 right-0 translate-x-1/2 text-[8px] text-gray-400 font-bold whitespace-nowrap opacity-100 group-hover:opacity-0 transition-opacity">
-                                    ${{ number_format($chartData[3], 0) }}
+                                    ₱{{ number_format($chartData[3], 0) }}
                                 </div>
                             </div>
                         </div>
@@ -234,10 +234,6 @@
                                 <a href="#" class="text-[10px] font-bold uppercase text-gray-400 hover:text-red-500 transition flex items-center">
                                     <svg class="w-3.5 h-3.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                     View Reports
-                                </a>
-                                <a href="#" class="text-[10px] font-bold uppercase text-red-500 transition flex items-center group">
-                                    <svg class="w-3.5 h-3.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                                    New Inquiries <span class="ml-2 bg-red-600 text-white px-1.5 rounded text-[8px]">0</span>
                                 </a>
                             </div>
                         </div>

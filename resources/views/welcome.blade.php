@@ -343,6 +343,43 @@
             <p class="font-bold text-sm leading-relaxed mb-8 text-gray-300">
                 Located at the heart of Duterte St, Danao, Cebu, we have become a go-to destination for clients who value both skill and a welcoming atmosphere. Under the leadership of Anthony Batac, we have spent half a decade perfecting our craft.
             </p>
+
+            <div x-data="{ hoveredImg: null }" class="space-y-6 mt-8 mb-12">
+                <div class="flex flex-wrap gap-x-12 gap-y-6">
+                    <div class="reveal">
+                        <p class="text-[10px] font-black text-red-600 uppercase tracking-[0.3em] mb-3">Verification</p>
+                        <div class="flex flex-wrap gap-2">
+                            @for ($i = 1; $i <= 4; $i++)
+                                <button @mouseenter="hoveredImg = '{{ asset('images/permit' . $i . '.png') }}'" @mouseleave="hoveredImg = null" 
+                                    class="px-4 py-2 bg-zinc-950 border border-red-900/30 text-[9px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all transform hover:-translate-y-1 shadow-lg">
+                                    Permit {{ $i }}
+                                </button>
+                            @endfor
+                        </div>
+                    </div>
+                    <div class="reveal">
+                        <p class="text-[10px] font-black text-red-600 uppercase tracking-[0.3em] mb-3">Interior Look</p>
+                        <div class="flex flex-wrap gap-2">
+                            @for ($i = 1; $i <= 2; $i++)
+                                <button @mouseenter="hoveredImg = '{{ asset('images/inside' . $i . '.png') }}'" @mouseleave="hoveredImg = null" 
+                                    class="px-4 py-2 bg-zinc-950 border border-red-900/30 text-[9px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all transform hover:-translate-y-1 shadow-lg">
+                                    Inside {{ $i }}
+                                </button>
+                            @endfor
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dynamic Hover Preview -->
+                <div class="relative h-0 opacity-0 overflow-hidden transition-all duration-700 ease-in-out" 
+                     :class="hoveredImg ? 'h-80 opacity-100 mt-6' : 'h-0 opacity-0 mt-0'">
+                    <div class="absolute inset-0 bg-black/80 backdrop-blur-md border border-red-600/50 rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(255,0,0,0.15)] flex items-center justify-center p-2">
+                        <img :src="hoveredImg" class="max-w-full max-h-full object-contain transition-all duration-500 transform scale-95" 
+                             :class="hoveredImg ? 'scale-100' : 'scale-95'">
+                        <div class="absolute top-4 right-4 bg-red-600 text-white font-black text-[8px] uppercase px-2 py-1 italic tracking-widest">Preview Mode</div>
+                    </div>
+                </div>
+            </div>
             
             <div class="info-card">
                 <div class="info-line"><i class="fas fa-phone text-red-500 w-5"></i> <span>Contact: 0928 936 2396</span></div>

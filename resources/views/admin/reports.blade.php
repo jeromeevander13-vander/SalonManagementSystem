@@ -36,9 +36,9 @@
         <div x-show="reportTab === 'sales'">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-black bg-opacity-30 border border-red-900 p-6 rounded relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-2 opacity-10 text-4xl italic font-black">$$$</div>
+                    <div class="absolute top-0 right-0 p-2 opacity-10 text-4xl italic font-black">₱₱₱</div>
                     <p class="text-red-500 text-[10px] font-black uppercase mb-1">Gross Revenue</p>
-                    <h3 class="text-3xl font-black text-white italic tracking-tighter">${{ number_format($totalSales, 2) }}</h3>
+                    <h3 class="text-3xl font-black text-white italic tracking-tighter">₱{{ number_format($totalSales, 2) }}</h3>
                 </div>
                 <div class="bg-black bg-opacity-30 border border-red-900 p-6 rounded relative overflow-hidden">
                     <p class="text-red-500 text-[10px] font-black uppercase mb-1">Growth Forecast</p>
@@ -49,7 +49,7 @@
                     @php 
                         $avg = $totalAppointments > 0 ? $totalSales / $totalAppointments : 0;
                     @endphp
-                    <h3 class="text-3xl font-black text-white italic tracking-tighter">${{ number_format($avg, 2) }}</h3>
+                    <h3 class="text-3xl font-black text-white italic tracking-tighter">₱{{ number_format($avg, 2) }}</h3>
                 </div>
             </div>
 
@@ -97,7 +97,7 @@
                             <td class="px-6 py-4 text-white font-bold uppercase text-[10px] italic">{{ $client->name }}</td>
                             <td class="px-6 py-4 text-gray-400 text-[10px] italic">{{ $client->email }}</td>
                             <td class="px-6 py-4 text-white text-[10px] font-black italic">{{ $client->appointments_count }}</td>
-                            <td class="px-6 py-4 text-right text-red-500 font-black italic text-[10px]">${{ number_format($client->total_spent, 2) }}</td>
+                            <td class="px-6 py-4 text-right text-red-500 font-black italic text-[10px]">₱{{ number_format($client->total_spent, 2) }}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -134,7 +134,7 @@
                                 {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('M d, Y - h:i A') }}
                             </td>
                             <td class="px-6 py-4 text-green-500 font-black italic text-[10px]">
-                                ${{ in_array(strtolower($appointment->status), ['completed', 'confirmed']) ? number_format($price, 2) : '0.00' }}
+                                ₱{{ in_array(strtolower($appointment->status), ['completed', 'confirmed']) ? number_format($price, 2) : '0.00' }}
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <span class="status-badge status-{{ strtolower($appointment->status) }}">

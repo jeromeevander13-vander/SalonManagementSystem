@@ -69,7 +69,6 @@
                 <div class="w-16 h-16 bg-red-950/20 rounded-full flex items-center justify-center text-red-600/30 mb-4 text-3xl">🗓</div>
                 <h3 class="text-white font-black uppercase italic tracking-tighter text-xl">No Appointments Scheduled</h3>
                 <p class="text-gray-500 text-xs uppercase tracking-widest mt-2 max-w-xs mx-auto">It's time to treat yourself to something special!</p>
-                <button @click="showModal = true; step = 1" class="mt-8 bg-red-600 text-white px-8 py-3 rounded font-black uppercase tracking-tighter hover:bg-white hover:text-black transition shadow-lg">Book Now</button>
             </div>
         </div>
         @endforelse

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AppointmentConfirmed;
+use App\Mail\AppointmentCancelled;
 use App\Models\Appointment;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
@@ -39,7 +42,7 @@ class AdminController extends Controller
         
         $data = $query->get();
         $clients = User::where('role', 'client')->get();
-        $services = \App\Models\Service::all();
+        $services = \App\Models\Service::latest()->get();
 
         // Global Metrics (Not affected by current filter)
         $totalCustomers = $clients->count();
@@ -147,16 +150,18 @@ class AdminController extends Controller
 
     public function update(Request $request, Appointment $appointment)
     {
-
-
         $request->validate([
             'phone'            => 'required|string|max:20',
             'appointment_date' => 'required|date',
-            'appointment_time' => 'required', // This is the 09:00:00 string
+            'appointment_time' => 'required',
             'status'           => 'required|string',
             'message'          => 'nullable|string',
             'service_type'     => 'nullable|string|max:255',
         ]);
+
+        // Capture the previous status before updating
+        $previousStatus = $appointment->status;
+        $newStatus      = $request->status;
 
         // Combine Date + Time for your single DB column
         $fullTimestamp = $request->appointment_date . ' ' . $request->appointment_time;
@@ -164,13 +169,22 @@ class AdminController extends Controller
         $appointment->update([
             'phone'            => $request->phone,
             'appointment_time' => $fullTimestamp,
-            'status'           => $request->status,
+            'status'           => $newStatus,
             'message'          => $request->message,
         ]);
 
-        
+        // Send email only when status actually changes
+        if ($previousStatus !== $newStatus) {
+            $appointment->load('service'); // ensure relationship is loaded
 
-        return redirect()->route('admin_main')->with('success', 'Appointment updated!');
+            if ($newStatus === 'confirmed') {
+                Mail::to($appointment->email)->send(new AppointmentConfirmed($appointment));
+            } elseif ($newStatus === 'cancelled') {
+                Mail::to($appointment->email)->send(new AppointmentCancelled($appointment));
+            }
+        }
+
+        return redirect()->route('admin_main')->with('success', 'Appointment updated! Email notification sent to client.');
     }
 
     public function clients()

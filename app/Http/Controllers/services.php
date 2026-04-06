@@ -9,7 +9,7 @@ class services extends Controller
 {
     //
     public function index() {
-        $services = Service::where('status', 'active')->get()->groupBy('category');
+        $services = Service::where('status', 'active')->latest()->get()->groupBy('category');
         return view('services', compact('services'));
     }
 }

@@ -71,10 +71,10 @@
                     <div class="flex items-center">
                         <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
                             <button @click="dropdownOpen = !dropdownOpen" class="flex items-center focus:outline-none group">
-                                <span class="hidden sm:inline text-[10px] font-black uppercase mr-2 text-gray-500 italic group-hover:text-red-500 transition tracking-widest">{{ Auth::user()->name }}</span>
+                                <span class="hidden sm:inline text-[10px] font-black uppercase mr-2 text-gray-500 italic group-hover:text-red-500 transition tracking-widest">{{ \Illuminate\Support\Facades\Auth::user()->name }}</span>
                                 <div class="w-8 h-8 rounded-full bg-red-600 overflow-hidden flex items-center justify-center font-black text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-110">
-                                    @if(Auth::user()->avatar)
-                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
+                                    @if(\Illuminate\Support\Facades\Auth::user()->avatar)
+                                        <img src="{{ strpos(\Illuminate\Support\Facades\Auth::user()->avatar, 'avatars/') === 0 ? \Illuminate\Support\Facades\Storage::disk('s3')->url(\Illuminate\Support\Facades\Auth::user()->avatar) : asset('storage/' . \Illuminate\Support\Facades\Auth::user()->avatar) }}" class="w-full h-full object-cover">
                                     @else
                                         {{ substr(Auth::user()->name, 0, 1) }}
                                     @endif

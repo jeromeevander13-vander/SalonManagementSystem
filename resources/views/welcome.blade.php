@@ -629,7 +629,7 @@
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-12 h-12 rounded-full overflow-hidden border border-red-900 bg-black flex items-center justify-center shrink-0">
                             @if($testimonial->user->avatar)
-                                <img src="{{ asset('storage/' . $testimonial->user->avatar) }}" class="w-full h-full object-cover">
+                                <img src="{{ strpos($testimonial->user->avatar, 'avatars/') === 0 ? \Illuminate\Support\Facades\Storage::disk('s3')->url($testimonial->user->avatar) : asset('storage/' . $testimonial->user->avatar) }}" class="w-full h-full object-cover">
                             @else
                                 <span class="text-white font-black italic">{{ substr($testimonial->user->name, 0, 1) }}</span>
                             @endif

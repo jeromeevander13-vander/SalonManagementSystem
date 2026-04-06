@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
@@ -33,10 +34,7 @@ class ServiceController extends Controller
         $data = $request->except('image');
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/services'), $imageName);
-            $data['image'] = 'images/services/' . $imageName;
+            $data['image'] = $request->file('image')->store('services', 's3');
         }
 
         Service::create($data);
@@ -64,15 +62,15 @@ class ServiceController extends Controller
         $data = $request->except('image');
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('images/services'), $imageName);
-            $data['image'] = 'images/services/' . $imageName;
-
             // Delete old image if it exists
-            if ($service->image && file_exists(public_path($service->image))) {
-                @unlink(public_path($service->image));
+            if ($service->image) {
+                if (Storage::disk('s3')->exists($service->image)) {
+                    Storage::disk('s3')->delete($service->image);
+                } elseif (file_exists(public_path($service->image))) {
+                    @unlink(public_path($service->image));
+                }
             }
+            $data['image'] = $request->file('image')->store('services', 's3');
         }
 
         $service->update($data);
@@ -82,8 +80,12 @@ class ServiceController extends Controller
 
     public function destroy(Service $service)
     {
-        if ($service->image && file_exists(public_path($service->image))) {
-            @unlink(public_path($service->image));
+        if ($service->image) {
+            if (Storage::disk('s3')->exists($service->image)) {
+                Storage::disk('s3')->delete($service->image);
+            } elseif (file_exists(public_path($service->image))) {
+                @unlink(public_path($service->image));
+            }
         }
 
         $service->delete();

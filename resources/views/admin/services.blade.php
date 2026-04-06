@@ -27,7 +27,7 @@
         <!-- Service Image -->
         <div class="h-48 w-full bg-black relative overflow-hidden border-b border-white/5 shadow-inner">
             @if($service->image)
-                <img src="{{ asset($service->image) }}" alt="{{ $service->name }}" class="w-full h-full object-contain opacity-90 group-hover:opacity-100 group-hover:scale-105 transition duration-700">
+                <img src="{{ strpos($service->image, 'services/') === 0 ? \Illuminate\Support\Facades\Storage::disk('s3')->url($service->image) : asset($service->image) }}" alt="{{ $service->name }}" class="w-full h-full object-contain opacity-90 group-hover:opacity-100 group-hover:scale-105 transition duration-700">
             @else
                 <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-black">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-red-900 opacity-50 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

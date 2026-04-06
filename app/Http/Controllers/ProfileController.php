@@ -31,11 +31,15 @@ class ProfileController extends Controller
 
         if ($request->hasFile('avatar')) {
             // Delete old avatar if it exists
-            if ($user->avatar && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+            if ($user->avatar) {
+                if (\Illuminate\Support\Facades\Storage::disk('s3')->exists($user->avatar)) {
+                    \Illuminate\Support\Facades\Storage::disk('s3')->delete($user->avatar);
+                } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($user->avatar);
+                }
             }
 
-            $path = $request->file('avatar')->store('avatars', 'public');
+            $path = $request->file('avatar')->store('avatars', 's3');
             $user->avatar = $path;
         }
 

@@ -20,7 +20,7 @@
             'name' => $service->name,
             'price' => $service->price,
             'duration' => $service->duration ? $service->duration . ' mins' : 'N/A',
-            'img' => $service->image ? asset($service->image) : asset('images/service.jpg'),
+            'img' => $service->image ? (str_starts_with($service->image, 'services/') ? \Illuminate\Support\Facades\Storage::disk('s3')->url($service->image) : asset($service->image)) : asset('images/service.jpg'),
             'desc' => $service->description ?? 'Professional service',
             'sessions' => null
         ];
@@ -129,7 +129,7 @@
                                 <span class="hidden sm:inline text-[10px] font-black uppercase mr-2 text-gray-500 italic group-hover:text-red-500 transition tracking-widest">{{ Auth::user()->name }}</span>
                                 <div class="w-8 h-8 rounded-full bg-red-600 overflow-hidden flex items-center justify-center font-black text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-110">
                                     @if(Auth::user()->avatar)
-                                        <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
+                                        <img src="{{ str_starts_with(Auth::user()->avatar, 'avatars/') ? \Illuminate\Support\Facades\Storage::disk('s3')->url(Auth::user()->avatar) : asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
                                     @else
                                         {{ substr(Auth::user()->name, 0, 1) }}
                                     @endif
@@ -329,7 +329,8 @@
                     <template x-for="(service, index) in services" :key="index">
                         <div class="bg-card-dark border border-red-900 p-4 rounded group hover:border-red-600 transition-all flex flex-col shadow-lg">
                             <div class="relative">
-                                <img :src="service.img" class="w-full h-40 object-cover rounded mb-4 opacity-70 group-hover:opacity-100 transition border border-red-900">
+                                <img :src="service.img" class="w-full h-40 object-cover rounded mb-4 opacity-70 group-hover:opacity-100 transition border border-red-900" 
+                                     :onerror="`this.src='${window.location.origin}/images/service.jpg'`">
                                 <span class="absolute top-2 right-2 bg-black bg-opacity-80 text-white text-[9px] font-black px-2 py-1 rounded border border-red-900 uppercase tracking-widest flex items-center">
                                     <svg class="w-3 h-3 mr-1 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     <span x-text="service.duration"></span>
@@ -389,7 +390,8 @@
 
                                 <div class="bg-card-dark border border-red-900 p-4 rounded group hover:border-red-600 transition-all flex flex-col shadow-lg">
                                     <div class="relative">
-                                        <img :src="service.img" class="w-full h-40 object-cover rounded mb-4 opacity-70 group-hover:opacity-100 transition border border-red-900">
+                                        <img :src="service.img" class="w-full h-40 object-cover rounded mb-4 opacity-70 group-hover:opacity-100 transition border border-red-900"
+                                             :onerror="`this.src='${window.location.origin}/images/service.jpg'`">
                                         <span class="absolute top-2 right-2 bg-black bg-opacity-80 text-white text-[9px] font-black px-2 py-1 rounded border border-red-900 uppercase tracking-widest flex items-center">
                                             <svg class="w-3 h-3 mr-1 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                             <span x-text="service.duration"></span>

@@ -14,7 +14,7 @@
                 <!-- Service Icon/Image Placeholder -->
                 <div class="hidden sm:flex w-16 h-16 rounded bg-black border border-red-900 items-center justify-center text-red-600 relative overflow-hidden">
                     @if($appointment->service && $appointment->service->image)
-                        <img src="{{ asset($appointment->service->image) }}" class="w-full h-full object-cover opacity-60">
+                        <img src="{{ str_starts_with($appointment->service->image, 'services/') ? \Illuminate\Support\Facades\Storage::disk('s3')->url($appointment->service->image) : asset($appointment->service->image) }}" class="w-full h-full object-cover opacity-60">
                     @else
                         <svg class="w-8 h-8 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758L5 19m0-14l4.121 4.121" /></svg>
                     @endif

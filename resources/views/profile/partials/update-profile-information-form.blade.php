@@ -23,7 +23,7 @@
                 <!-- Current Profile Photo -->
                 <div class="w-32 h-32 rounded-full overflow-hidden border-2 border-red-900 bg-black flex items-center justify-center shadow-lg transition group-hover:border-red-600" x-show="!photoPreview">
                     @if($user->avatar)
-                        <img src="{{ strpos($user->avatar, 'avatars/') === 0 ? \Illuminate\Support\Facades\Storage::disk('s3')->url($user->avatar) : asset('storage/' . $user->avatar) }}" class="w-full h-full object-cover">
+                        <img src="{{ str_starts_with($user->avatar, 'avatars/') ? \Illuminate\Support\Facades\Storage::disk('s3')->url($user->avatar) : asset('storage/' . $user->avatar) }}" class="w-full h-full object-cover">
                     @else
                         <span class="text-4xl font-black text-white italic uppercase">{{ substr($user->name, 0, 1) }}</span>
                     @endif

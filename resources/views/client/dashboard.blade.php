@@ -62,10 +62,33 @@
         .status-cancelled { background-color: #ef4444; color: #fff; }
 
         .white-icon { filter: brightness(0) invert(1); }
+
+        /* Professional Pagination Styling */
+        nav[role="navigation"] svg { width: 1.25rem; height: 1.25rem; }
+        nav[role="navigation"] span, nav[role="navigation"] a { 
+            background-color: #0c0c0c !important; 
+            border-color: #1a1a1a !important; 
+            color: #666 !important; 
+            font-size: 10px !important;
+            font-weight: 900 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.1em !important;
+            transition: all 0.3s ease !important;
+        }
+        nav[role="navigation"] a:hover { 
+            background-color: #b91c1c !important; 
+            color: white !important; 
+            border-color: #ef4444 !important;
+        }
+        nav[role="navigation"] span[aria-current="page"] span { 
+            background-color: #b91c1c !important; 
+            color: white !important; 
+            border-color: #ef4444 !important;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-dark-home text-gray-200" x-data="{
-    currentTab: 'dashboard',
+    currentTab: localStorage.getItem('clientTab') || 'dashboard',
     mobileMenuOpen: false,
     appointments: [],
     showModal: {{ $errors->any() ? 'true' : 'false' }},
@@ -102,32 +125,42 @@
             selectedDuration = svc.duration;
         }
     }
+    $watch('currentTab', val => localStorage.setItem('clientTab', val))
 ">
     <div class="min-h-screen">
-        <nav class="bg-black border-b border-red-900 text-white shadow-lg">
+        <nav class="sticky top-0 z-50 bg-black border-b border-red-900 text-white shadow-lg backdrop-blur-md bg-opacity-95">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-14">
-                    <div class="flex items-center space-x-4">
-                        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-gray-400 hover:text-red-500 focus:outline-none">
-                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                                <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                        <div class="flex items-center gap-3">
-                            <img src="{{ asset('images/woman-with-long-hair.png') }}" class="w-8 h-8 white-icon">
-                            <span class="text-lg font-black tracking-tighter uppercase italic mobile-title">Tonet Salon</span>
+                    <div class="flex items-center gap-8">
+                        <div class="flex items-center">
+                            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-gray-400 hover:text-red-500 focus:outline-none mr-4 transition">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                    <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                            <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+                                <img src="{{ asset('images/woman-with-long-hair.png') }}" class="w-8 h-8 white-icon transition group-hover:scale-110">
+                                <span class="text-xl font-black tracking-tighter uppercase italic text-white leading-none">Tonet <span class="text-red-600">Salon</span></span>
+                            </a>
                         </div>
-                        <div class="hidden md:flex space-x-2 ml-10 text-xs font-bold uppercase tracking-widest">
-                            <a href="#" @click.prevent="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded flex items-center transition">Dashboard</a>
-                            <a href="#" @click.prevent="currentTab = 'myappointments'" :class="currentTab === 'myappointments' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500 border border-transparent'" class="px-3 py-2 rounded transition flex items-center">My Appointments</a>
+
+                        <div class="hidden md:block h-6 w-[1px] bg-white/10"></div>
+
+                        <div class="hidden md:flex items-center space-x-1 text-[10px] font-bold uppercase tracking-widest">
+                            <a href="#" @click.prevent="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-white bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.4)]' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'" class="px-4 py-2.5 rounded-lg transition-all duration-300 flex items-center">Dashboard</a>
+                            <a href="#" @click.prevent="currentTab = 'myappointments'" :class="currentTab === 'myappointments' ? 'text-white bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.4)]' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'" class="px-4 py-2.5 rounded-lg transition-all duration-300 flex items-center">My Appointments</a>
                         </div>
                     </div>
+
                     <div class="flex items-center">
                         <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
                             <button @click="dropdownOpen = !dropdownOpen" class="flex items-center focus:outline-none group">
-                                <span class="hidden sm:inline text-[10px] font-black uppercase mr-2 text-gray-500 italic group-hover:text-red-500 transition tracking-widest">{{ Auth::user()->name }}</span>
-                                <div class="w-8 h-8 rounded-full bg-red-600 overflow-hidden flex items-center justify-center font-black text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-110">
+                                <div class="text-right mr-3 hidden sm:block">
+                                    <p class="text-[9px] font-black uppercase tracking-widest text-red-600 leading-none">Client Portal</p>
+                                    <p class="text-[11px] font-bold text-gray-400 mt-0.5">{{ Auth::user()->name }}</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-red-900 overflow-hidden flex items-center justify-center font-black text-white border border-white/10 shadow-lg transition group-hover:scale-105 group-hover:-rotate-3">
                                     @if(Auth::user()->avatar)
                                         <img src="{{ str_starts_with(Auth::user()->avatar, 'avatars/') ? \Illuminate\Support\Facades\Storage::disk('s3')->url(Auth::user()->avatar) : asset('storage/' . Auth::user()->avatar) }}" class="w-full h-full object-cover">
                                     @else
@@ -136,11 +169,20 @@
                                 </div>
                                 <svg class="ms-1 fill-current h-4 w-4 text-red-600 transition-transform group-hover:translate-y-0.5" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" /></svg>
                             </button>
-                            <div x-show="dropdownOpen" x-cloak class="absolute right-0 z-50 mt-2 w-48 rounded shadow-xl bg-card-dark border border-red-900 py-1 text-gray-300">
-                                <a href="{{ route('client.profile') }}" class="block px-4 py-2 text-sm hover:bg-red-900 hover:text-white">Profile Settings</a>
+                            <div x-show="dropdownOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="absolute right-0 z-50 mt-4 w-56 rounded-2xl bg-[#0f0f0f] border border-white/5 py-2 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl" x-cloak>
+                                <div class="px-4 py-3 border-b border-white/5 mb-2">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-500">Account Options</p>
+                                </div>
+                                <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-300 hover:bg-white/5 hover:text-white transition-all">
+                                    <svg class="w-4 h-4 mr-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                    Profile Settings
+                                </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-900 hover:text-white font-bold" onclick="event.preventDefault(); this.closest('form').submit();">Log Out</button>
+                                    <button type="submit" class="flex items-center w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-900/20 transition-all">
+                                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                        Logout
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -304,7 +346,7 @@
                                         <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758L5 19m0-14l4.121 4.121" /></svg>
                                         Browse Services
                                     </a>
-                                    <a href="{{ route('client.profile') }}" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center">
+                                    <a href="{{ route('profile.edit') }}" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center">
                                         <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                         Update Profile
                                     </a>

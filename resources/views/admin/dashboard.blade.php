@@ -25,20 +25,40 @@
         .chart-container svg { width: 100%; height: 100%; }
         [x-cloak] { display: none !important; }
 
-        /* Status Badge Styling for Appointments */
-        .status-badge { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; }
-        .status-pending { background-color: #eab308; color: #000; }
-        .status-completed { background-color: #06b6d4; color: #000; }
-        .status-accepted { background-color: #16a34a; color: #fff; }
+        /* Status Badge Styling for Appointments (Only for the Registry/Appointments Tab) */
+        .status-badge { font-size: 9px; font-weight: 900; text-transform: uppercase; padding: 4px 12px; border-radius: 9999px; letter-spacing: 0.1em; display: inline-flex; align-items: center; justify-content: center; min-width: 80px; text-align: center; }
+        .status-pending { background-color: #f59e0b; color: #fff; box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
+        .status-confirmed { background-color: #2563eb; color: #fff; box-shadow: 0 0 10px rgba(37, 99, 235, 0.2); }
+        .status-completed { background-color: #16a34a; color: #fff; box-shadow: 0 0 10px rgba(22, 163, 74, 0.2); }
+        .status-cancelled { background-color: #dc2626; color: #fff; box-shadow: 0 0 10px rgba(220, 38, 38, 0.2); }
+        .status-no-show { background-color: #4b5563; color: #fff; box-shadow: 0 0 10px rgba(75, 85, 99, 0.2); }
         
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
-        /* Mobile Adjustments */
-        @media (max-width: 768px) {
-            .mobile-title-text { font-size: 0.75rem; }
-        }
-
         .white-icon { filter: brightness(0) invert(1); }
+
+        /* Professional Pagination Styling */
+        nav[role="navigation"] svg { width: 1.25rem; height: 1.25rem; }
+        nav[role="navigation"] span, nav[role="navigation"] a { 
+            background-color: #0c0c0c !important; 
+            border-color: #1a1a1a !important; 
+            color: #666 !important; 
+            font-size: 10px !important;
+            font-weight: 900 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.1em !important;
+            transition: all 0.3s ease !important;
+        }
+        nav[role="navigation"] a:hover { 
+            background-color: #b91c1c !important; 
+            color: white !important; 
+            border-color: #ef4444 !important;
+        }
+        nav[role="navigation"] span[aria-current="page"] span { 
+            background-color: #b91c1c !important; 
+            color: white !important; 
+            border-color: #ef4444 !important;
+        }
     </style>
 </head>
 <body class="font-sans antialiased bg-midnight text-gray-200" x-data="{ currentTab: localStorage.getItem('adminTab') || 'dashboard', mobileMenuOpen: false, showModal: false, selectedAppointment: {} }" x-init="$watch('currentTab', val => localStorage.setItem('adminTab', val))">
@@ -47,41 +67,51 @@
         <nav class="sticky top-0 z-50 bg-black border-b border-red-900 text-white shadow-2xl">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center md:hidden">
-                            <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-400 hover:text-white focus:outline-none">
+                    <div class="flex items-center gap-8">
+                        <div class="flex items-center">
+                            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-gray-400 hover:text-white mr-4 transition">
                                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                                     <path x-show="mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
+                            <a href="{{ route('home') }}" class="flex items-center gap-3 group">
+                                <img src="{{ asset('images/woman-with-long-hair.png') }}" class="w-8 h-8 white-icon transition group-hover:scale-110">
+                                <span class="text-xl font-black tracking-tighter uppercase italic text-white">Tonet <span class="text-red-600">Salon</span></span>
+                            </a>
                         </div>
 
-                        <div class="flex items-center gap-3">
-                            <img src="{{ asset('images/woman-with-long-hair.png') }}" class="w-8 h-8 white-icon">
-                            <span class="text-lg font-black tracking-tighter uppercase italic mobile-title-text">Tonet Salon</span>
-                        </div>
+                        <div class="hidden md:block h-6 w-[1px] bg-white/10"></div>
 
-                        <div class="hidden md:flex space-x-1 ml-10 text-[10px] font-bold uppercase tracking-widest">
-                            <button @click="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">DASHBOARD</button>
-                            <button @click="currentTab = 'appointments'" :class="currentTab === 'appointments' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">APPOINTMENTS</button>
-                            <button @click="currentTab = 'services'" :class="currentTab === 'services' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">SERVICES</button>
-                            <button @click="currentTab = 'clients'" :class="currentTab === 'clients' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">CLIENTS</button>
-                            <button @click="currentTab = 'reports'" :class="currentTab === 'reports' ? 'text-red-500 bg-red-950 bg-opacity-30 border border-red-900' : 'hover:text-red-500'" class="px-3 py-2 rounded flex items-center transition outline-none">REPORTS</button>
-                            
+                        <div class="hidden md:flex space-x-1 text-[10px] font-bold uppercase tracking-widest">
+                            <button @click="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-white bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.4)]' : 'text-gray-400 hover:text-white hover:bg-white/5'" class="px-4 py-2.5 rounded-lg transition-all duration-300">DASHBOARD</button>
+                            <button @click="currentTab = 'appointments'" :class="currentTab === 'appointments' ? 'text-white bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.4)]' : 'text-gray-400 hover:text-white hover:bg-white/5'" class="px-4 py-2.5 rounded-lg transition-all duration-300">APPOINTMENTS</button>
+                            <button @click="currentTab = 'services'" :class="currentTab === 'services' ? 'text-white bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.4)]' : 'text-gray-400 hover:text-white hover:bg-white/5'" class="px-4 py-2.5 rounded-lg transition-all duration-300">SERVICES</button>
+                            <button @click="currentTab = 'clients'" :class="currentTab === 'clients' ? 'text-white bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.4)]' : 'text-gray-400 hover:text-white hover:bg-white/5'" class="px-4 py-2.5 rounded-lg transition-all duration-300">CLIENTS</button>
+                            <button @click="currentTab = 'reports'" :class="currentTab === 'reports' ? 'text-white bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.4)]' : 'text-gray-400 hover:text-white hover:bg-white/5'" class="px-4 py-2.5 rounded-lg transition-all duration-300">REPORTS</button>
                         </div>
                     </div>
 
                     <div class="flex items-center">
                         <div class="relative" x-data="{ dropdownOpen: false }" @click.outside="dropdownOpen = false">
                             <button @click="dropdownOpen = !dropdownOpen" class="flex items-center focus:outline-none group">
-                                <span class="hidden sm:inline text-xs font-bold uppercase mr-2 text-gray-400 italic group-hover:text-red-500 transition">Admin</span>
-                                <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-xs text-white border border-red-400 shadow-lg transition group-hover:scale-105">A</div>
+                                <div class="text-right mr-3 hidden sm:block">
+                                    <p class="text-[9px] font-black uppercase tracking-widest text-red-600 leading-none">Administrator</p>
+                                    <p class="text-[11px] font-bold text-gray-400 mt-0.5">Admin Account</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-red-900 flex items-center justify-center font-black text-white border border-white/10 shadow-lg transition group-hover:scale-105 group-hover:rotate-3">A</div>
                             </button>
-                            <div x-show="dropdownOpen" x-transition class="absolute right-0 z-50 mt-2 w-48 rounded bg-card-dark border border-red-900 py-1" x-cloak>
+                            <div x-show="dropdownOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="absolute right-0 z-50 mt-4 w-56 rounded-2xl bg-[#111] border border-white/5 py-2 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl" x-cloak>
+                                <div class="px-4 py-3 border-b border-white/5 mb-2">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-500">System Control</p>
+                                </div>
+                                <a href="{{ route('profile.edit') }}" class="flex items-center w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-red-900/20 transition-all">Profile Settings</a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-900 hover:text-white font-bold transition">Log Out</button>
+                                    <button type="submit" class="flex items-center w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-900/20 transition-all">
+                                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                       Logout
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -96,7 +126,7 @@
                     <button @click="currentTab = 'services'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">SERVICES</button>
                     <button @click="currentTab = 'clients'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">CLIENTS</button>
                     <button @click="currentTab = 'reports'; mobileMenuOpen = false" class="block w-full text-left px-3 py-4 text-gray-300 hover:text-red-500 hover:bg-red-950 transition">REPORTS</button>
-                  
+                </div>
             </div>
         </nav>
 
@@ -109,48 +139,44 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-                    <div class="bg-card-dark p-5 rounded border border-red-900 shadow-xl flex justify-between items-center group hover:border-red-600 transition-colors">
-                        <div><p class="text-4xl font-black text-white">{{ $totalCustomers }}</p><p class="text-gray-500 text-[10px] font-bold uppercase">Total Customers</p></div>
-                        <div class="text-red-600">
-                            <svg class="w-10 h-10 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                        </div>
+                    <div class="bg-card-dark p-6 rounded border border-red-900 shadow-xl flex flex-col justify-between group hover:border-red-600 transition-colors">
+                        <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Total Customers</p>
+                        <h3 class="text-4xl font-black text-white italic tracking-tighter">{{ $totalCustomers }}</h3>
                     </div>
-                    <div class="bg-card-dark p-5 rounded border border-red-900 shadow-xl flex justify-between items-center group hover:border-red-600 transition-colors">
-                        <div><p class="text-4xl font-black text-white">{{ $totalAppointments }}</p><p class="text-gray-500 text-[10px] font-bold uppercase">Total Appointments</p></div>
-                        <div class="text-red-600">
-                            <svg class="w-10 h-10 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </div>
+                    <div class="bg-card-dark p-6 rounded border border-red-900 shadow-xl flex flex-col justify-between group hover:border-red-600 transition-colors">
+                        <p class="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-2">Total Appointments</p>
+                        <h3 class="text-4xl font-black text-white italic tracking-tighter">{{ $totalAppointments }}</h3>
                     </div>
-                    <div class="bg-card-dark p-5 rounded border border-red-900 shadow-xl flex justify-between items-center group hover:border-yellow-600 transition-colors">
-                        <div><p class="text-4xl font-black text-white">{{ $pendingAppointmentsCount }}</p><p class="text-gray-500 text-[10px] font-bold uppercase">Pending</p></div>
-                        <div class="text-yellow-600">
-                            <svg class="w-10 h-10 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
+                    <div class="bg-card-dark p-6 rounded border border-red-900 shadow-xl flex flex-col justify-between group hover:border-yellow-600 transition-colors">
+                        <p class="text-yellow-600 text-[10px] font-black uppercase tracking-widest mb-2">Pending Sessions</p>
+                        <h3 class="text-4xl font-black text-white italic tracking-tighter">{{ $pendingAppointmentsCount }}</h3>
                     </div>
-                    <div class="bg-card-dark p-5 rounded border border-red-900 shadow-xl flex justify-between items-center group hover:border-red-600 transition-colors">
-                        <div><p class="text-4xl font-black text-white">{{ $totalServices }}</p><p class="text-gray-500 text-[10px] font-bold uppercase">Total Services</p></div>
-                        <div class="text-red-600">
-                            <svg class="w-10 h-10 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758L5 19m0-14l4.121 4.121" />
-                            </svg>
-                        </div>
+                    <div class="bg-card-dark p-6 rounded border border-red-900 shadow-xl flex flex-col justify-between group hover:border-red-600 transition-colors">
+                        <p class="text-red-600 text-[10px] font-black uppercase tracking-widest mb-2">Total Services</p>
+                        <h3 class="text-4xl font-black text-white italic tracking-tighter">{{ $totalServices }}</h3>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 text-center">
-                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">₱{{ number_format($todaySales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Today's Sales</p></div>
-                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">₱{{ number_format($yesterdaySales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Yesterday's Sales</p></div>
-                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">₱{{ number_format($last7DaysSales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Last 7 Days Sales</p></div>
-                    <div class="bg-red-900 bg-opacity-20 p-6 rounded border border-red-900"><p class="text-2xl font-black text-white">₱{{ number_format($totalSales, 2) }}</p><p class="text-red-500 text-[9px] font-bold uppercase tracking-widest">Total Sales</p></div>
+                <div class="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-red-900/10 p-5 rounded border border-red-900/50 flex flex-col items-center">
+                        <p class="text-2xl font-black text-white tracking-tighter uppercase italic">₱{{ number_format($todaySales, 2) }}</p>
+                        <p class="text-red-500 text-[9px] font-bold uppercase tracking-[0.2em] mt-1">Today's Sales</p>
+                    </div>
+                    <div class="bg-red-900/10 p-5 rounded border border-red-900/50 flex flex-col items-center">
+                        <p class="text-2xl font-black text-white tracking-tighter uppercase italic">₱{{ number_format($yesterdaySales, 2) }}</p>
+                        <p class="text-red-500 text-[9px] font-bold uppercase tracking-[0.2em] mt-1">Yesterday's Sales</p>
+                    </div>
+                    <div class="bg-red-900/10 p-5 rounded border border-red-900/50 flex flex-col items-center">
+                        <p class="text-2xl font-black text-white tracking-tighter uppercase italic">₱{{ number_format($last7DaysSales, 2) }}</p>
+                        <p class="text-red-500 text-[9px] font-bold uppercase tracking-[0.2em] mt-1">Last 7 Days Sales</p>
+                    </div>
+                    <div class="bg-red-900/10 p-5 rounded border border-red-900/50 flex flex-col items-center">
+                        <p class="text-2xl font-black text-white tracking-tighter uppercase italic">₱{{ number_format($totalSales, 2) }}</p>
+                        <p class="text-red-500 text-[9px] font-bold uppercase tracking-[0.2em] mt-1">Total Sales</p>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                     <div class="lg:col-span-2 bg-card-dark rounded border border-red-900 p-6 shadow-2xl relative">
                         <div class="flex items-center text-white font-black uppercase italic text-xs mb-10 tracking-widest">
                             <svg class="w-5 h-5 mr-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,7 +184,7 @@
                             </svg> Sales Trend
                         </div>
                         @php
-                            $maxSales = max(max($chartData), 1);
+                            $maxSales = max(collect($chartData)->max(), 1);
                             $y1 = 256 - (($chartData[0] / $maxSales) * 236) - 10;
                             $y2 = 256 - (($chartData[1] / $maxSales) * 236) - 10;
                             $y3 = 256 - (($chartData[2] / $maxSales) * 236) - 10;
@@ -169,51 +195,12 @@
                                 <polyline fill="none" class="transition-all duration-1000" stroke="#ef4444" stroke-width="4" points="0,{{ $y1 }} 333,{{ $y2 }} 666,{{ $y3 }} 1000,{{ $y4 }}" />
                             </svg>
                             
-                            <!-- Point 1 -->
-                            <div class="absolute top-0 left-0 group" style="top: {{ $y1 }}px;">
-                                <div class="w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-midnight transition-all duration-1000 group-hover:scale-150"></div>
-                                <div class="absolute bottom-4 left-0 -translate-x-1/2 bg-red-900 bg-opacity-90 text-[8px] text-white px-2 py-0.5 rounded font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-red-500 shadow-lg z-10">
-                                    ₱{{ number_format($chartData[0], 2) }}
-                                </div>
-                                <div class="absolute bottom-4 left-0 -translate-x-1/2 text-[8px] text-gray-400 font-bold whitespace-nowrap opacity-100 group-hover:opacity-0 transition-opacity">
-                                    ₱{{ number_format($chartData[0], 0) }}
-                                </div>
-                            </div>
-
-                            <!-- Point 2 -->
-                             <div class="absolute top-0 left-1/3 group" style="top: {{ $y2 }}px;">
-                                <div class="w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-midnight transition-all duration-1000 group-hover:scale-150"></div>
-                                <div class="absolute bottom-4 left-0 -translate-x-1/2 bg-red-900 bg-opacity-90 text-[8px] text-white px-2 py-0.5 rounded font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-red-500 shadow-lg z-10">
-                                    ₱{{ number_format($chartData[1], 2) }}
-                                </div>
-                                <div class="absolute bottom-4 left-0 -translate-x-1/2 text-[8px] text-gray-400 font-bold whitespace-nowrap opacity-100 group-hover:opacity-0 transition-opacity">
-                                    ₱{{ number_format($chartData[1], 0) }}
-                                </div>
-                            </div>
-
-                            <!-- Point 3 -->
-                             <div class="absolute top-0 left-2/3 group" style="top: {{ $y3 }}px;">
-                                <div class="w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-midnight transition-all duration-1000 group-hover:scale-150"></div>
-                                <div class="absolute bottom-4 left-0 -translate-x-1/2 bg-red-900 bg-opacity-90 text-[8px] text-white px-2 py-0.5 rounded font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-red-500 shadow-lg z-10">
-                                    ₱{{ number_format($chartData[2], 2) }}
-                                </div>
-                                <div class="absolute bottom-4 left-0 -translate-x-1/2 text-[8px] text-gray-400 font-bold whitespace-nowrap opacity-100 group-hover:opacity-0 transition-opacity">
-                                    ₱{{ number_format($chartData[2], 0) }}
-                                </div>
-                            </div>
-
-                            <!-- Point 4 -->
-                             <div class="absolute top-0 right-0 group" style="top: {{ $y4 }}px;">
-                                <div class="w-3 h-3 bg-red-600 rounded-full translate-x-1.5 -translate-y-1.5 border-2 border-midnight transition-all duration-1000 shadow-[0_0_10px_#ff0000] group-hover:scale-150"></div>
-                                <div class="absolute bottom-4 right-0 translate-x-1/2 bg-red-900 bg-opacity-90 text-[8px] text-white px-2 py-0.5 rounded font-black whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity border border-red-500 shadow-lg z-10">
-                                    ₱{{ number_format($chartData[3], 2) }}
-                                </div>
-                                <div class="absolute bottom-4 right-0 translate-x-1/2 text-[8px] text-gray-400 font-bold whitespace-nowrap opacity-100 group-hover:opacity-0 transition-opacity">
-                                    ₱{{ number_format($chartData[3], 0) }}
-                                </div>
-                            </div>
+                            <div class="absolute top-0 left-0 group" style="top: {{ $y1 }}px;"><div class="w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-midnight"></div></div>
+                            <div class="absolute top-0 left-1/3 group" style="top: {{ $y2 }}px;"><div class="w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-midnight"></div></div>
+                            <div class="absolute top-0 left-2/3 group" style="top: {{ $y3 }}px;"><div class="w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-midnight"></div></div>
+                            <div class="absolute top-0 right-0 group" style="top: {{ $y4 }}px;"><div class="w-3 h-3 bg-red-600 rounded-full translate-x-1.5 -translate-y-1.5 border-2 border-midnight"></div></div>
                         </div>
-                        <div class="flex justify-between mt-4 text-[9px] text-gray-500 font-bold uppercase italic tracking-widest">
+                        <div class="flex justify-between mt-4 text-[9px] text-gray-500 font-bold uppercase tracking-widest italic">
                             <span>{{ $chartLabels[0] }}</span><span>{{ $chartLabels[1] }}</span><span>{{ $chartLabels[2] }}</span><span>{{ $chartLabels[3] }}</span>
                         </div>
                     </div>
@@ -221,78 +208,51 @@
                     <div class="bg-card-dark rounded border border-red-900 p-6 shadow-2xl">
                         <h3 class="font-black text-white uppercase italic text-sm tracking-widest mb-6">Quick Actions</h3>
                         <div class="space-y-6">
-                            <div class="flex items-center text-yellow-500 text-[10px] font-bold uppercase">Review Pending Appointments <span class="ml-auto bg-yellow-600 text-black px-2 py-0.5 rounded font-black">{{ collect($data)->where('status', 'pending')->count() }}</span></div>
+                            <div class="flex items-center text-yellow-500 text-[10px] font-bold uppercase">System Status: Active</div>
                             <div class="flex flex-col space-y-4 pt-2 border-l border-red-900 pl-4">
-                                <a href="#" class="text-[10px] font-bold uppercase text-red-500 hover:text-white transition flex items-center">
+                                <button @click="currentTab = 'services'" class="text-[10px] font-bold uppercase text-red-500 hover:text-white transition text-left flex items-center">
                                     <svg class="w-3.5 h-3.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                                     Add New Service
-                                </a>
-                                <a href="#" class="text-[10px] font-bold uppercase text-gray-400 hover:text-red-500 transition flex items-center">
+                                </button>
+                                <button @click="currentTab = 'clients'" class="text-[10px] font-bold uppercase text-gray-400 hover:text-red-500 transition text-left flex items-center">
                                     <svg class="w-3.5 h-3.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
                                     Manage Customers
-                                </a>
-                                <a href="#" class="text-[10px] font-bold uppercase text-gray-400 hover:text-red-500 transition flex items-center">
+                                </button>
+                                <button @click="currentTab = 'reports'" class="text-[10px] font-bold uppercase text-gray-400 hover:text-red-500 transition text-left flex items-center">
                                     <svg class="w-3.5 h-3.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                                     View Reports
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-8 bg-card-dark rounded border border-red-900 overflow-hidden shadow-2xl">
+                <div class="bg-card-dark rounded border border-red-900 overflow-hidden shadow-2xl">
                     <div class="bg-red-700 px-6 py-3 flex justify-between items-center">
-                        <h3 class="font-black text-white uppercase italic text-xs tracking-widest">Recent Appointments</h3>
-                        <button @click="currentTab = 'appointments'" class="text-white text-[10px] uppercase hover:underline font-black italic">View All</button>
+                        <h3 class="font-black text-white uppercase italic text-xs tracking-widest">Recent Activity</h3>
+                        <button @click="currentTab = 'appointments'" class="text-white text-[10px] uppercase hover:underline font-black italic">View Full Stream</button>
                     </div>
-                    <div class="p-0">
-                        @if($recentAppointments->isEmpty())
-                        <div class="p-20 text-center text-gray-700 font-bold uppercase text-[10px] tracking-[0.4em] italic">
-                            No records found in system
-                        </div>
-                        @else
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left">
-                                <thead>
-                                    <tr class="border-b border-red-900 bg-midnight text-[9px] font-black uppercase tracking-widest text-red-500 italic">
-                                        <th class="px-6 py-3">Customer</th>
-                                        <th class="px-6 py-3">Service</th>
-                                        <th class="px-6 py-3">Date & Time</th>
-                                        <th class="px-6 py-3">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($recentAppointments as $appointment)
-                                    <tr class="border-b border-red-900/10 hover:bg-white/5 transition-colors">
-                                        <td class="px-6 py-3 text-white font-bold uppercase text-[10px] tracking-wider italic">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-6 h-6 rounded-full overflow-hidden border border-red-900 bg-black flex items-center justify-center">
-                                                    @if($appointment->user?->avatar)
-                                                        <img src="{{ asset('storage/' . $appointment->user->avatar) }}" class="w-full h-full object-cover">
-                                                    @else
-                                                        {{ substr($appointment->customer_name, 0, 1) }}
-                                                    @endif
-                                                </div>
-                                                {{ $appointment->customer_name }}
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-3 text-white font-bold uppercase text-[10px] tracking-wider italic">
-                                            {{ $appointment->service?->name ?? 'N/A' }}
-                                        </td>
-                                        <td class="px-6 py-3 text-white font-bold uppercase text-[10px] tracking-wider italic">
-                                            {{ \Carbon\Carbon::parse($appointment->appointment_time)->format('M d, Y h:i A') }}
-                                        </td>
-                                        <td class="px-6 py-3 text-white font-bold uppercase text-[10px] tracking-wider">
-                                            <span class="status-badge status-{{ strtolower($appointment->status) }}">
-                                                {{ $appointment->status }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        @endif
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-red-900 bg-midnight text-[9px] font-black uppercase tracking-widest text-red-500 italic">
+                                    <th class="px-6 py-3">Customer</th>
+                                    <th class="px-6 py-3">Service</th>
+                                    <th class="px-6 py-3">Timing</th>
+                                    <th class="px-6 py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($recentAppointments as $appointment)
+                                <tr class="border-b border-red-900/10 hover:bg-white/5 transition-colors">
+                                    <td class="px-6 py-3 text-white font-bold uppercase text-[10px] tracking-wider italic">{{ $appointment->customer_name }}</td>
+                                    <td class="px-6 py-3 text-white font-bold uppercase text-[10px] tracking-wider italic">{{ $appointment->service?->name ?? 'N/A' }}</td>
+                                    <td class="px-6 py-3 text-gray-400 font-bold text-[10px] tracking-wider italic">{{ \Carbon\Carbon::parse($appointment->appointment_time)->format('M d, h:i A') }}</td>
+                                    <td class="px-6 py-3 text-white font-black uppercase text-[10px] tracking-widest italic opacity-70">{{ $appointment->status }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -307,10 +267,6 @@
 
             <div x-show="currentTab === 'reports'" x-cloak>
                 @include('admin.reports')
-            </div>
-
-            <div x-show="currentTab === 'inquiries'" x-cloak>
-                @include('admin.inquiries')
             </div>
 
             <div x-show="currentTab === 'appointments'" x-cloak>
@@ -328,6 +284,7 @@
                                 <option value="pending" {{ $status == 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="confirmed" {{ $status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
                                 <option value="completed" {{ $status == 'completed' ? 'selected' : '' }}>Completed</option>
+                                <option value="no-show" {{ $status == 'no-show' ? 'selected' : '' }}>No-Show</option>
                                 <option value="cancelled" {{ $status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                             </select>
                         </div>
@@ -339,10 +296,6 @@
                                     <option value="{{ $service->id }}" {{ $service_id == $service->id ? 'selected' : '' }}>{{ $service->name }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="w-full md:w-1/4">
-                            <label class="block text-[10px] font-bold uppercase text-gray-500 mb-1 tracking-widest">Date</label>
-                            <input type="date" name="date" value="{{ $date }}" class="w-full bg-midnight border border-red-900 text-gray-400 text-xs rounded px-3 py-2.5 outline-none uppercase font-bold tracking-widest focus:border-red-600 transition">
                         </div>
                         <div class="flex gap-2">
                             <button type="submit" class="bg-red-700 hover:bg-red-600 text-white text-[10px] font-black uppercase px-6 py-3 rounded transition shadow-lg">Filter</button>
@@ -360,10 +313,10 @@
                             <thead>
                                 <tr class="border-b border-red-900 text-[10px] font-black uppercase tracking-widest text-red-500 italic">
                                     <th class="px-6 py-4">Customer</th>
-                                    <th class="px-6 py-4">phone</th>
+                                    <th class="px-6 py-4">Phone</th>
                                     <th class="px-6 py-4">Service</th>
                                     <th class="px-6 py-4">Date & Time</th>
-                                    <th class="px-6 py-4">Status</th>
+                                    <th class="px-6 py-4 text-center">Status</th>
                                     <th class="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -391,8 +344,10 @@
                                     <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
                                         {{$datas->appointment_time}}
                                     </td>
-                                    <td class="px-6 py-4 text-left text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
-                                        {{$datas->status}}
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="status-badge status-{{ strtolower(str_replace(' ', '-', $datas->status)) }}">
+                                            {{ $datas->status }}
+                                        </span>
                                     </td>
                                     <td class="px-6 py-4 text-right text-white font-bold uppercase text-[10px] tracking-[0.2em] italic">
                                         <button @click="selectedAppointment = { id: '{{ $datas->id }}', name: '{{ $datas->customer_name }}', phone: '{{ $datas->phone }}', status: '{{ $datas->status }}', message: '{{ $datas->message }}', date: '{{ date('Y-m-d', strtotime($datas->appointment_time)) }}', time: '{{ date('H:i:s', strtotime($datas->appointment_time)) }}' }; showModal = true" class="text-red-500 hover:text-red-400 cursor-pointer">Update</button>
@@ -401,6 +356,9 @@
                                 @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    <div class="mt-4 px-6 pb-6">
+                        {{ $data->links() }}
                     </div>
                 </div>
             </div>
@@ -416,17 +374,14 @@
                 
                 <div class="flex justify-between items-start">
                     <div>
-                        <h2 class="text-3xl font-black text-white uppercase tracking-tighter">Edit Session</h2>
-                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">
+                        <h2 class="text-3xl font-black text-white uppercase tracking-tighter text-left">Edit Session</h2>
+                        <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1 text-left">
                             Appointment ID: #<span x-text="selectedAppointment.id"></span>
                         </p>
                     </div>
-                    <div class="border border-green-800 text-green-500 text-[9px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full bg-[#0a2e16]/30">
-                        <span x-text="selectedAppointment.status"></span>
-                    </div>
                 </div>
 
-                <form :action="'/admin/update/' + selectedAppointment.id" method="POST" class="flex flex-col gap-5">
+                <form :action="'/admin/update/' + selectedAppointment.id" method="POST" class="flex flex-col gap-5 text-left">
                     @csrf
                     @method('PUT')
                     
@@ -436,6 +391,7 @@
                             <option value="pending">Pending</option>
                             <option value="confirmed">Confirmed</option>
                             <option value="completed">Completed</option>
+                            <option value="no-show">No-Show</option>
                             <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
@@ -469,7 +425,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Notes / Special Requests</label>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-2 tracking-widest">Notes</label>
                         <textarea name="message" x-model="selectedAppointment.message" rows="3" class="w-full bg-[#111] border border-[#222] text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-red-900 transition resize-none"></textarea>
                     </div>
 

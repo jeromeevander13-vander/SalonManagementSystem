@@ -26,6 +26,20 @@ public function store(Request $request)
         "message"          => 'nullable|string',
     ]);
 
+    // 0. Ban Check
+    if (Auth::user()->is_banned) {
+        return redirect()->back()->with('error', 'Your booking privileges have been suspended. Please contact the salon for more information.');
+    }
+
+    // Anti-Spam Check: Limit pending appointments to 2 per user
+    $pendingCount = Appointment::where('email', Auth::user()->email)
+        ->where('status', 'pending')
+        ->count();
+
+    if ($pendingCount >= 2) {
+        return redirect()->back()->withInput()->with('error', 'You already have 2 pending appointments. Please wait for the salon to confirm them before booking another one.');
+    }
+
     // 1. Fetch Service and Calculate Proposed Time Slot
     $service = Service::findOrFail($request->service_id);
     $proposedStart = Carbon::parse($request->appointment_date . ' ' . $request->appointment_time);
@@ -89,6 +103,6 @@ public function store(Request $request)
         'message'          => $request->message,
     ]);
 
-    return redirect()->route('client_main')->with('success', 'Booking Successful! We\'ll see you then.');
+    return redirect()->route('client_main')->with('success', 'Booking Successful! Please wait for confirmation..');
 }
 }

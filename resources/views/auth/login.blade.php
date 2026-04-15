@@ -1,5 +1,12 @@
 <x-guest-layout>
     <div id="login-container" class="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
+        <!-- Back Button -->
+        <a href="{{ route('home') }}" class="absolute top-8 left-8 flex items-center gap-2 text-gray-500 hover:text-red-600 transition-all duration-300 group z-50 font-black text-[10px] uppercase tracking-[0.3em]">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Return
+        </a>
         <!-- Interactive Cursor Glow -->
         <div id="cursor-glow" class="absolute inset-0 pointer-events-none z-0 transition-opacity duration-300 opacity-0" 
              style="background: radial-gradient(600px circle at var(--x, 0px) var(--y, 0px), rgba(220, 38, 38, 0.15), transparent 80%);"></div>

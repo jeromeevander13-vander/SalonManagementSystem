@@ -13,6 +13,10 @@ class TestimonialController extends Controller
             'comment' => 'required|string|max:1000',
         ]);
 
+        if (auth()->user()->is_banned) {
+            return back()->with('error', 'Your access to post testimonials has been suspended.');
+        }
+
         \App\Models\Testimonial::create([
             'user_id' => auth()->id(),
             'rating' => $request->rating,

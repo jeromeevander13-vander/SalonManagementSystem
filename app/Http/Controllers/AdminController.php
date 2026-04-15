@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Mail\AppointmentConfirmed;
 use App\Mail\AppointmentCancelled;
+use App\Mail\NoShowAlert;
 use App\Models\Appointment;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Mail\AccountBanned;
+use App\Mail\AccountUnbanned;
 use Illuminate\Support\Facades\Mail;
+
 
 class AdminController extends Controller
 {
@@ -40,19 +44,25 @@ class AdminController extends Controller
             $query->where('service_id', $service_id);
         }
         
-        $data = $query->get();
-        $clients = User::where('role', 'client')->get();
+        // All data for global metrics (affected by filters)
+        $allData = $query->get();
+        
+        // Paginated data for Appointments Tab
+        $data = $query->paginate(10, ['*'], 'appointmentsPage')->withQueryString();
+
+        // Clients Data
+        $allClients = User::where('role', 'client')->orderBy('name')->get();
+        $clients = User::where('role', 'client')->orderBy('name')->paginate(10, ['*'], 'clientsPage')->withQueryString();
+        
         $services = \App\Models\Service::latest()->get();
 
         // Global Metrics (Not affected by current filter)
-        $totalCustomers = $clients->count();
+        $totalCustomers = $allClients->count();
         $totalAppointmentsCount = Appointment::count();
         $pendingAppointmentsCountGlobal = Appointment::where('status', 'pending')->count();
         $totalServices = $services->count();
 
-        // Sales Data (Using filtered data for trends, or global?)
-        // Usually sales reports use the date filters but maybe not the status filters from the appointments table.
-        // Let's use a separate query for sales if date filters are present.
+        // Sales Data
         $salesQuery = Appointment::with('service');
         if ($startDate) $salesQuery->whereDate('appointment_time', '>=', $startDate);
         if ($endDate) $salesQuery->whereDate('appointment_time', '<=', $endDate);
@@ -62,16 +72,15 @@ class AdminController extends Controller
             return in_array(strtolower($appointment->status), ['completed', 'confirmed']);
         });
 
-        $totalAppointments = $totalAppointmentsCount; // Use global for the overview card
+        $totalAppointments = $totalAppointmentsCount; 
         $pendingAppointmentsCount = $pendingAppointmentsCountGlobal;
 
-        // Helper function to get clean numeric price from related service
         $getPrice = function($appointment) {
-            $service = $appointment->service; // Assumes relationship 'service' exists
+            $service = $appointment->service;
             if ($service) {
                 return (float) preg_replace('/[^0-9.]/', '', $service->price);
             }
-            return 0; // Fallback if no service is found
+            return 0;
         };
 
         $today = now()->startOfDay();
@@ -93,9 +102,10 @@ class AdminController extends Controller
 
         $totalSales = $completedAppointments->sum($getPrice);
 
-        // Client Report Data
-        $clientReport = $clients->map(function($client) use ($data, $getPrice) {
-            $clientAppointments = $data->where('email', $client->email);
+        // Client Report Data (Derived from paginated clients for the report view)
+        // We use allData to ensure counts are accurate across all appointments
+        $clientReport = $clients->getCollection()->map(function($client) use ($allData, $getPrice) {
+            $clientAppointments = $allData->where('email', $client->email);
             return (object)[
                 'name' => $client->name,
                 'email' => $client->email,
@@ -130,8 +140,7 @@ class AdminController extends Controller
             'Today',
         ];
 
-        // Recent Appointments
-        $recentAppointments = $data->take(5);
+        $recentAppointments = $allData->take(5);
 
         return view("admin.dashboard", compact(
             "data", "user", "clients", "services",
@@ -181,6 +190,13 @@ class AdminController extends Controller
                 Mail::to($appointment->email)->send(new AppointmentConfirmed($appointment));
             } elseif ($newStatus === 'cancelled') {
                 Mail::to($appointment->email)->send(new AppointmentCancelled($appointment));
+            } elseif ($newStatus === 'no-show') {
+                // Find the user and increment no-show count
+                $user = User::where('email', $appointment->email)->first();
+                if ($user) {
+                    $user->increment('no_show_count');
+                }
+                Mail::to($appointment->email)->send(new NoShowAlert($appointment));
             }
         }
 
@@ -193,6 +209,25 @@ class AdminController extends Controller
         return view('admin.clients', compact('clients'));
     }
 
+    public function toggleBan(User $user)
+    {
+        if ($user->role !== 'client') {
+            return redirect()->back()->with('error', 'Unauthorized action.');
+        }
+
+        $user->is_banned = !$user->is_banned;
+        $user->save();
+
+        if ($user->is_banned) {
+            Mail::to($user->email)->send(new AccountBanned($user));
+        } else {
+            Mail::to($user->email)->send(new AccountUnbanned($user));
+        }
+
+        $status = $user->is_banned ? 'banned' : 'unbanned';
+        return redirect()->back()->with('success', "Client has been {$status} successfully. Email notification sent.");
+    }
+
     public function destroyClient(User $user)
     {
         // Ensure we are only deleting clients, not admins
@@ -202,6 +237,6 @@ class AdminController extends Controller
 
         $user->delete();
 
-        return redirect()->route('admin_main')->with('success', 'Client deleted successfully.');
+        return redirect()->back()->with('success', 'Client deleted successfully.');
     }
 }

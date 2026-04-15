@@ -53,6 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/admin/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
         Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
         Route::get('/admin/clients', [AdminController::class, 'clients'])->name('admin.clients');
+        Route::post('/admin/clients/{user}/ban', [AdminController::class, 'toggleBan'])->name('admin.clients.ban');
         Route::delete('/admin/clients/{user}', [AdminController::class, 'destroyClient'])->name('admin.clients.destroy');
         Route::get('/admin/invoices', [InvoiceController::class, 'index'])->name('admin.invoices');
         Route::get('/admin/inquiries', [InquiryController::class, 'index'])->name('admin.inquiries');
@@ -69,24 +70,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/book-appointment', function() { return redirect()->route('client_main'); });
 });
 
-    // Profile Management
-    Route::controller(ProfileController::class)->group(function () {
-        Route::get('/profile', 'edit')->name('profile.edit');
-        Route::patch('/profile', 'update')->name('profile.update');
-        Route::delete('/profile', 'destroy')->name('profile.destroy');
-    });
-
+    // Unified Profile Management
     Route::middleware(['auth'])->group(function () {
-    // Show the profile page
-    Route::get('/profile', function () {
-        return view('client.profile', [
-            'user' => auth()->user()
-        ]);
-    })->name('client.profile');
-
-    // Handle the update logic
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-});
+        Route::controller(ProfileController::class)->group(function () {
+            Route::get('/profile', 'edit')->name('profile.edit');
+            Route::patch('/profile', 'update')->name('profile.update');
+            Route::delete('/profile', 'destroy')->name('profile.destroy');
+        });
+    });
 
 
 require __DIR__.'/auth.php';

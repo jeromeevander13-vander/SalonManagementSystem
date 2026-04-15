@@ -14,10 +14,18 @@ class ClientController extends Controller
     public function index()
     {
         $user_email = Auth::user()->email;
-        $appointments = Appointment::with('service')
+        
+        // Full list for metrics and upcoming sessions
+        $allAppointments = Appointment::with('service')
             ->where('email', $user_email)
             ->orderBy('appointment_time', 'desc')
             ->get();
+
+        // Paginated list for the "My Appointments" tab
+        $appointments = Appointment::with('service')
+            ->where('email', $user_email)
+            ->orderBy('appointment_time', 'desc')
+            ->paginate(5);
 
         $services = \App\Models\Service::where('status', 'active')->get();
 
@@ -30,21 +38,21 @@ class ClientController extends Controller
             return 0;
         };
 
-        // Metrics
-        $totalAppointments = $appointments->count();
+        // Metrics (using full list)
+        $totalAppointments = $allAppointments->count();
         
-        $upcomingAppointmentsCount = $appointments->filter(function ($app) {
+        $upcomingAppointmentsCount = $allAppointments->filter(function ($app) {
             return in_array(strtolower($app->status), ['pending', 'confirmed']) && 
                    \Carbon\Carbon::parse($app->appointment_time)->isFuture();
         })->count();
 
-        $totalSpent = $appointments->filter(function ($app) {
+        $totalSpent = $allAppointments->filter(function ($app) {
             return in_array(strtolower($app->status), ['completed', 'confirmed']);
         })->sum($getPrice);
 
-        $recentAppointments = $appointments->take(5);
+        $recentAppointments = $allAppointments->take(5);
         
-        $nextVisit = $appointments->filter(function ($app) {
+        $nextVisit = $allAppointments->filter(function ($app) {
             return in_array(strtolower($app->status), ['pending', 'confirmed']) && 
                    \Carbon\Carbon::parse($app->appointment_time)->isFuture();
         })->sortBy('appointment_time')->first();

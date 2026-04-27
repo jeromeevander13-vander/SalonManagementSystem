@@ -85,6 +85,7 @@
                                     placeholder="••••••••">
                                 <div class="absolute bottom-0 left-0 h-[2px] w-0 bg-red-600 group-focus-within/input:w-full transition-all duration-300 rounded-full"></div>
                             </div>
+                            <p class="text-[9px] text-gray-600 font-bold uppercase mt-2 tracking-widest">Min. 8 chars, mixed case, number & symbol</p>
                             <x-input-error :messages="$errors->get('password')" class="mt-2 text-[10px] font-bold uppercase" />
                         </div>
 

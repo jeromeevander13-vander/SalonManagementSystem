@@ -24,7 +24,7 @@ class AdminController extends Controller
         $date = $request->input('date');
         $service_id = $request->input('service_id');
 
-        $user = User::where('role', 'admin')->get();
+        $admins = User::where('role', 'admin')->get();
         
         $query = Appointment::with('service')->orderBy('appointment_time', 'desc');
         
@@ -143,7 +143,7 @@ class AdminController extends Controller
         $recentAppointments = $allData->take(5);
 
         return view("admin.dashboard", compact(
-            "data", "user", "clients", "services",
+            "data", "admins", "clients", "services",
             "totalCustomers", "totalAppointments", "pendingAppointmentsCount", "totalServices",
             "todaySales", "yesterdaySales", "last7DaysSales", "totalSales",
             "recentAppointments", "chartData", "chartLabels", "clientReport",

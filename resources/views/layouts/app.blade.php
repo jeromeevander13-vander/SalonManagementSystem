@@ -32,11 +32,21 @@
                 <a href="{{ route('register') }}" class="bg-red-600 text-white px-4 py-2 hover:bg-white hover:text-black transition">Sign Up</a>
             </div>
         </nav>
-        @yield('header_content')
+        @if (isset($header))
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                {{ $header }}
+            </div>
+        @else
+            @yield('header_content')
+        @endif
     </header>
 
     <main>
-        @yield('content')
+        @if(isset($slot))
+            {{ $slot }}
+        @else
+            @yield('content')
+        @endif
     </main>
 
     <footer class="py-16 mt-auto">

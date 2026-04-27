@@ -91,7 +91,7 @@
     currentTab: localStorage.getItem('clientTab') || 'dashboard',
     mobileMenuOpen: false,
     appointments: [],
-    showModal: {{ $errors->any() ? 'true' : 'false' }},
+    showModal: {{ $errors->hasAny(['appointment_date', 'appointment_time', 'service_id', 'phone', 'message']) ? 'true' : 'false' }},
     showDetailsModal: false,
     selectedAppointment: null,
     step: {{ $errors->any() ? 2 : 1 }},
@@ -114,7 +114,8 @@
         this.bookingData.service_id = id;
         this.bookingData.price = price;
         this.step = 2;
-    }
+    },
+    showDeleteModal: false
 }" x-init="
     console.log('Alpine.js loaded', services);
     if (bookingData.service_id) {
@@ -150,6 +151,7 @@
                         <div class="hidden md:flex items-center space-x-1 text-[10px] font-bold uppercase tracking-widest">
                             <a href="#" @click.prevent="currentTab = 'dashboard'" :class="currentTab === 'dashboard' ? 'text-white bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.4)]' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'" class="px-4 py-2.5 rounded-lg transition-all duration-300 flex items-center">Dashboard</a>
                             <a href="#" @click.prevent="currentTab = 'myappointments'" :class="currentTab === 'myappointments' ? 'text-white bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.4)]' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'" class="px-4 py-2.5 rounded-lg transition-all duration-300 flex items-center">My Appointments</a>
+                            <a href="#" @click.prevent="currentTab = 'settings'" :class="currentTab === 'settings' ? 'text-white bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.4)]' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'" class="px-4 py-2.5 rounded-lg transition-all duration-300 flex items-center">Settings</a>
                         </div>
                     </div>
 
@@ -173,7 +175,7 @@
                                 <div class="px-4 py-3 border-b border-white/5 mb-2">
                                     <p class="text-[10px] font-black uppercase tracking-widest text-gray-500">Account Options</p>
                                 </div>
-                                <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-300 hover:bg-white/5 hover:text-white transition-all">
+                                <a href="#" @click.prevent="currentTab = 'settings'; dropdownOpen = false" class="flex items-center px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-300 hover:bg-white/5 hover:text-white transition-all">
                                     <svg class="w-4 h-4 mr-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                     Profile Settings
                                 </a>
@@ -192,6 +194,7 @@
             <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-black border-t border-red-900 px-4 py-2 space-y-1">
                 <a href="#" @click.prevent="currentTab = 'dashboard'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Dashboard</a>
                 <a href="#" @click.prevent="currentTab = 'myappointments'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">My Appointments</a>
+                <a href="#" @click.prevent="currentTab = 'settings'; mobileMenuOpen = false" class="block px-3 py-4 text-xs font-bold uppercase tracking-widest text-gray-300 hover:text-red-500">Settings</a>
             </div>
         </nav>
 
@@ -346,7 +349,7 @@
                                         <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758L5 19m0-14l4.121 4.121" /></svg>
                                         Browse Services
                                     </a>
-                                    <a href="{{ route('profile.edit') }}" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center">
+                                    <a href="#" @click.prevent="currentTab = 'settings'" class="text-gray-400 text-sm hover:text-red-500 font-bold uppercase tracking-tight flex items-center">
                                         <svg class="w-4 h-4 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                                         Update Profile
                                     </a>
@@ -359,6 +362,10 @@
 
             <div x-show="currentTab === 'myappointments'" x-cloak>
                 @include('client.myappointments')
+            </div>
+
+            <div x-show="currentTab === 'settings'" x-cloak>
+                @include('client.settings')
             </div>
 
             <div x-show="currentTab === 'services'" x-cloak>
@@ -618,6 +625,48 @@
 
             <div class="p-6 bg-black border-t border-red-900 flex justify-end">
                 <button @click="showDetailsModal = false" class="bg-red-600 text-white px-8 py-3 rounded font-black uppercase tracking-tighter hover:bg-white hover:text-black transition shadow-lg">Close Details</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div x-show="showDeleteModal" 
+         class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black bg-opacity-95" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-cloak
+         style="display: none;">
+        
+        <div class="bg-card-dark w-full max-w-md rounded border border-red-900 shadow-2xl overflow-hidden flex flex-col relative" @click.outside="showDeleteModal = false">
+            <div class="bg-black border-b border-red-900 p-6 flex justify-between items-center shadow-xl">
+                <div>
+                    <p class="text-[9px] text-red-500 font-black uppercase tracking-[0.25em] mb-1">Danger Zone</p>
+                    <h2 class="text-white font-black uppercase italic tracking-tighter text-2xl">Delete Account</h2>
+                </div>
+                <button @click="showDeleteModal = false" class="text-gray-500 hover:text-red-500 text-3xl font-black transition leading-none">&times;</button>
+            </div>
+
+            <div class="p-8 space-y-6 bg-dark-home">
+                <p class="text-gray-400 text-xs font-bold uppercase tracking-widest leading-relaxed">
+                    Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.
+                </p>
+
+                <form method="post" action="{{ route('profile.destroy') }}" class="space-y-4">
+                    @csrf
+                    @method('delete')
+
+                    <div>
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">Confirm Password</label>
+                        <input type="password" name="password" required class="w-full bg-black/40 border-white/10 text-white focus:border-red-600 focus:ring-0 text-sm py-3 px-4 rounded-lg transition-all" placeholder="Enter your password">
+                        <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-4">
+                        <button type="button" @click="showDeleteModal = false" class="text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white transition">Cancel</button>
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest py-3 px-6 rounded-lg text-[10px] transition-all shadow-lg active:scale-95">Permanently Delete</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

@@ -61,25 +61,55 @@
                 Revenue Overview
             </h2>
             
-            <div class="lg:col-span-2 bg-black bg-opacity-20 rounded-2xl border border-white/5 p-10 shadow-inner relative mb-8">
-                @php
-                    $maxSales = max(max($chartData), 1);
-                    $y1 = 256 - (($chartData[0] / $maxSales) * 236) - 10;
-                    $y2 = 256 - (($chartData[1] / $maxSales) * 236) - 10;
-                    $y3 = 256 - (($chartData[2] / $maxSales) * 236) - 10;
-                    $y4 = 256 - (($chartData[3] / $maxSales) * 236) - 10;
-                @endphp
-                <div class="relative h-64 w-full border-l border-b border-red-950 chart-container group">
-                    <svg viewBox="0 0 1000 256" preserveAspectRatio="none" class="absolute inset-0 w-full h-full">
-                        <polyline fill="none" class="transition-all duration-1000" stroke="#ef4444" stroke-width="4" points="0,{{ $y1 }} 333,{{ $y2 }} 666,{{ $y3 }} 1000,{{ $y4 }}" />
-                    </svg>
-                    <div class="absolute top-0 left-0 w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-black" style="top: {{ $y1 }}px;"></div>
-                    <div class="absolute top-0 left-1/3 w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-black" style="top: {{ $y2 }}px;"></div>
-                    <div class="absolute top-0 left-2/3 w-3 h-3 bg-red-600 rounded-full -translate-x-1.5 -translate-y-1.5 border-2 border-black" style="top: {{ $y3 }}px;"></div>
-                    <div class="absolute top-0 right-0 w-3 h-3 bg-red-600 rounded-full translate-x-1.5 -translate-y-1.5 border-2 border-black shadow-[0_0_10px_#ff0000]" style="top: {{ $y4 }}px;"></div>
+            <div class="lg:col-span-2 premium-glass rounded-[2rem] p-10 relative overflow-hidden chart-3d-scene mb-12">
+                <div class="flex items-center justify-between mb-8 relative z-10">
+                    <h2 class="text-white font-black uppercase italic text-lg flex items-center tracking-widest">
+                        <span class="w-8 h-[2px] bg-red-600 mr-4 shadow-[0_0_10px_#ff3131]"></span>
+                        Revenue Velocity
+                    </h2>
                 </div>
-                <div class="flex justify-between mt-6 text-[9px] text-gray-500 font-black uppercase italic tracking-widest px-2">
-                    <span>{{ $chartLabels[0] }}</span><span>{{ $chartLabels[1] }}</span><span>{{ $chartLabels[2] }}</span><span>{{ $chartLabels[3] }}</span>
+
+                @php
+                    $maxSales = max(collect($chartData)->max(), 1);
+                    $y1 = 256 - (($chartData[0] / $maxSales) * 180) - 40;
+                    $y2 = 256 - (($chartData[1] / $maxSales) * 180) - 40;
+                    $y3 = 256 - (($chartData[2] / $maxSales) * 180) - 40;
+                    $y4 = 256 - (($chartData[3] / $maxSales) * 180) - 40;
+                @endphp
+
+                <div class="relative h-72 w-full chart-3d-surface rounded-2xl p-6 border border-white/5 overflow-hidden group">
+                    <!-- 3D Grid Floor -->
+                    <div class="absolute inset-0 grid-3d pointer-events-none opacity-10"></div>
+
+                    <svg viewBox="0 0 1000 256" preserveAspectRatio="none" class="absolute inset-0 w-full h-full p-6 overflow-visible">
+                        <defs>
+                            <linearGradient id="repLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#ff3131" />
+                                <stop offset="100%" stop-color="#8b0000" />
+                            </linearGradient>
+                            <linearGradient id="repFillGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#ff3131" stop-opacity="0.3" />
+                                <stop offset="100%" stop-color="#ff3131" stop-opacity="0" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Area Fill -->
+                        <path d="M0,{{ $y1 }} C166,{{ $y1 }} 166,{{ $y2 }} 333,{{ $y2 }} C500,{{ $y2 }} 500,{{ $y3 }} 666,{{ $y3 }} C833,{{ $y3 }} 833,{{ $y4 }} 1000,{{ $y4 }} V256 H0 Z" 
+                              fill="url(#repFillGrad)" class="transition-all duration-1000" />
+                        
+                        <!-- Main Path -->
+                        <path d="M0,{{ $y1 }} C166,{{ $y1 }} 166,{{ $y2 }} 333,{{ $y2 }} C500,{{ $y2 }} 500,{{ $y3 }} 666,{{ $y3 }} C833,{{ $y3 }} 833,{{ $y4 }} 1000,{{ $y4 }}" 
+                              fill="none" stroke="url(#repLineGrad)" stroke-width="6" stroke-linecap="round" class="animate-flow" style="filter: drop-shadow(0 0 12px #ff3131);" />
+                    </svg>
+                    
+                    <!-- Indicators -->
+                    <div class="absolute" style="top: {{ $y1 + 14 }}px; left: 24px;"><div class="w-4 h-4 bg-white rounded-full border-4 border-red-600 shadow-[0_0_15px_#ff3131]"></div></div>
+                    <div class="absolute" style="top: {{ $y2 + 14 }}px; left: calc(33.3% + 18px);"><div class="w-4 h-4 bg-white rounded-full border-4 border-red-600 shadow-[0_0_15px_#ff3131]"></div></div>
+                    <div class="absolute" style="top: {{ $y3 + 14 }}px; left: calc(66.6% + 10px);"><div class="w-4 h-4 bg-white rounded-full border-4 border-red-600 shadow-[0_0_15px_#ff3131]"></div></div>
+                    <div class="absolute" style="top: {{ $y4 + 14 }}px; right: 24px;"><div class="w-4 h-4 bg-white rounded-full border-4 border-red-600 shadow-[0_0_20px_#ff3131] animate-[pulse-glow_2s_infinite]"></div></div>
+                </div>
+                <div class="flex justify-between mt-10 text-[10px] text-gray-500 font-black uppercase italic tracking-[0.4em] px-10 relative z-10">
+                    <span>{{ $chartLabels[0] }}</span><span>{{ $chartLabels[1] }}</span><span>{{ $chartLabels[2] }}</span><span class="text-red-500">{{ $chartLabels[3] }}</span>
                 </div>
             </div>
         </div>

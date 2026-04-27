@@ -27,6 +27,7 @@
                     <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">New Password</label>
                     <input type="password" name="password" required autocomplete="new-password"
                         class="w-full bg-black border-gray-800 text-white focus:border-red-600 focus:ring-0 text-sm py-3 px-4 transition-all">
+                    <p class="text-[9px] text-gray-600 font-bold uppercase mt-2 tracking-widest">Min. 8 chars, mixed case, number & symbol</p>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
 

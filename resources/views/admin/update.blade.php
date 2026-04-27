@@ -29,7 +29,107 @@
          }">
         
         <div class="mb-8 flex justify-between items-start">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4"># Illuminate\Database\QueryException - Internal Server Error
+
+SQLSTATE[HY000] [1130] Host 'localhost' is not allowed to connect to this MariaDB server (Connection: mysql, Host: localhost, Port: 3306, Database: salon_db, SQL: select * from `sessions` where `id` = 5sEaJSCgtrVG0UMeYuos3bRQGpIaG08EoM3NEQmk limit 1)
+
+PHP 8.2.12
+Laravel 12.47.0
+127.0.0.1:8000
+
+## Stack Trace
+
+0 - vendor\laravel\framework\src\Illuminate\Database\Connection.php:838
+1 - vendor\laravel\framework\src\Illuminate\Database\Connection.php:794
+2 - vendor\laravel\framework\src\Illuminate\Database\Connection.php:411
+3 - vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php:3368
+4 - vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php:3353
+5 - vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php:3943
+6 - vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php:3352
+7 - vendor\laravel\framework\src\Illuminate\Database\Concerns\BuildsQueries.php:366
+8 - vendor\laravel\framework\src\Illuminate\Database\Query\Builder.php:3275
+9 - vendor\laravel\framework\src\Illuminate\Session\DatabaseSessionHandler.php:96
+10 - vendor\laravel\framework\src\Illuminate\Session\Store.php:126
+11 - vendor\laravel\framework\src\Illuminate\Session\Store.php:114
+12 - vendor\laravel\framework\src\Illuminate\Session\Store.php:98
+13 - vendor\laravel\framework\src\Illuminate\Session\Middleware\StartSession.php:146
+14 - vendor\laravel\framework\src\Illuminate\Support\helpers.php:390
+15 - vendor\laravel\framework\src\Illuminate\Session\Middleware\StartSession.php:143
+16 - vendor\laravel\framework\src\Illuminate\Session\Middleware\StartSession.php:115
+17 - vendor\laravel\framework\src\Illuminate\Session\Middleware\StartSession.php:63
+18 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+19 - vendor\laravel\framework\src\Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse.php:36
+20 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+21 - vendor\laravel\framework\src\Illuminate\Cookie\Middleware\EncryptCookies.php:74
+22 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+23 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:137
+24 - vendor\laravel\framework\src\Illuminate\Routing\Router.php:821
+25 - vendor\laravel\framework\src\Illuminate\Routing\Router.php:800
+26 - vendor\laravel\framework\src\Illuminate\Routing\Router.php:764
+27 - vendor\laravel\framework\src\Illuminate\Routing\Router.php:753
+28 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php:200
+29 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:180
+30 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php:21
+31 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull.php:31
+32 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+33 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TransformsRequest.php:21
+34 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\TrimStrings.php:51
+35 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+36 - vendor\laravel\framework\src\Illuminate\Http\Middleware\ValidatePostSize.php:27
+37 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+38 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance.php:109
+39 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+40 - vendor\laravel\framework\src\Illuminate\Http\Middleware\HandleCors.php:48
+41 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+42 - vendor\laravel\framework\src\Illuminate\Http\Middleware\TrustProxies.php:58
+43 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+44 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks.php:22
+45 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+46 - vendor\laravel\framework\src\Illuminate\Http\Middleware\ValidatePathEncoding.php:26
+47 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:219
+48 - vendor\laravel\framework\src\Illuminate\Pipeline\Pipeline.php:137
+49 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php:175
+50 - vendor\laravel\framework\src\Illuminate\Foundation\Http\Kernel.php:144
+51 - vendor\laravel\framework\src\Illuminate\Foundation\Application.php:1220
+52 - public\index.php:20
+53 - vendor\laravel\framework\src\Illuminate\Foundation\resources\server.php:23
+
+## Request
+
+GET /
+
+## Headers
+
+* **host**: 127.0.0.1:8000
+* **connection**: keep-alive
+* **sec-ch-ua**: "Microsoft Edge";v="147", "Not.A/Brand";v="8", "Chromium";v="147"
+* **sec-ch-ua-mobile**: ?0
+* **sec-ch-ua-platform**: "Windows"
+* **upgrade-insecure-requests**: 1
+* **user-agent**: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36 Edg/147.0.0.0
+* **accept**: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+* **sec-fetch-site**: none
+* **sec-fetch-mode**: navigate
+* **sec-fetch-user**: ?1
+* **sec-fetch-dest**: document
+* **accept-encoding**: gzip, deflate, br, zstd
+* **accept-language**: en-US,en;q=0.9
+* **cookie**: XSRF-TOKEN=eyJpdiI6IklMNkdDbFhNSnNDa2Ryb3I5NHJhVGc9PSIsInZhbHVlIjoiZnVaQ1I3cjhHR004Q2JXM2xlQXlrZ0VGUHJPZjBLUzBlYlNCRmFHRFBiWS9zZXEzOHZQYVJuY0p0blhRUHdkMm5lbnlyNDc5YXpKbmZOY2Q1eVRjUHRONC9GT2IvUGRlUUJTUEowdDJWUnhqMGpJVWMrOW5HdWovNTRpTlFLNFgiLCJtYWMiOiJiZTgwNmQwYWNkMDViMDZmZDA4Y2Y3MDlkYjE4YTlkODEyYjFjYTQ3NTQ0ZmZhMzFlZWVjYWZkZTBiZjk3OTY3IiwidGFnIjoiIn0%3D; laravel-session=eyJpdiI6Im4rUW9WSm1VRlZ2M1J6THRjc2Mxcmc9PSIsInZhbHVlIjoiVnByODlUM2ZnS2VESkM3bVVXY21rNFY4N0NrRlUrUTVnWFdkY0ptR3RQU0tUaWtjSlZland3cXpDOVZsUnVvUG1abUF0N0Q0V0NBNUwzcU93WDE1bVo3b1NNU0NIazJyaDAyMU1nc3VYRDRzcTViSjFRNmZKN0Y0cThrZ25MemciLCJtYWMiOiJjNDk4NWM4OGMxYThkZjc5MDcyY2RiYjg5ZjlmN2Q4ZTA4OTI5YjA0NTk3MmQyNjE3MGM5MDk5ZDI5ZTk4YTU4IiwidGFnIjoiIn0%3D
+
+## Route Context
+
+controller: Closure
+route name: home
+middleware: web
+
+## Route Parameters
+
+No route parameter data available.
+
+## Database Queries
+
+No database queries detected.
+
                 <div class="w-12 h-12 rounded-full border border-red-900 overflow-hidden flex items-center justify-center bg-black">
                     @if($appointment->user?->avatar)
                         <img src="{{ asset('storage/' . $appointment->user?->avatar) }}" class="w-full h-full object-cover">

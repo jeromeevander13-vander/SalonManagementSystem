@@ -1,5 +1,32 @@
 <x-guest-layout>
-    <div id="login-container" class="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
+    <style>
+        #login-container {
+            background: #000 linear-gradient(180deg, #110000 0%, #000 100%);
+        }
+        #login-container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ asset('images/atonet.jpg') }}") center right/cover no-repeat;
+            mask-image: linear-gradient(to right, transparent 0%, black 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 100%);
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        @media (min-width: 768px) {
+            #login-container::after {
+                width: 60%;
+                opacity: 1;
+                mask-image: linear-gradient(to right, transparent 0%, black 40%);
+                -webkit-mask-image: linear-gradient(to right, transparent 0%, black 40%);
+            }
+        }
+    </style>
+    <div id="login-container" class="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden font-sans">
         <!-- Back Button -->
         <a href="{{ route('home') }}" class="absolute top-8 left-8 flex items-center gap-2 text-gray-500 hover:text-red-600 transition-all duration-300 group z-50 font-black text-[10px] uppercase tracking-[0.3em]">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
